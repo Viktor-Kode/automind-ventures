@@ -45,8 +45,11 @@ export function VehicleForm() {
     }
   }, []);
 
-  const role = (params.get("role") as Role) || stored?.role || "owner";
-  const userId = params.get("userId") || stored?.userId;
+  const roleFromParams = params?.get("role") as Role | null;
+  const userIdFromParams = params?.get("userId") || null;
+
+  const role = roleFromParams || stored?.role || "owner";
+  const userId = userIdFromParams || stored?.userId;
 
   useEffect(() => {
     if (!stored) return;

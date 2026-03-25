@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { CheckCircle2, CreditCard, RefreshCcw } from "lucide-react";
 import { Card } from "../../../components/ui/Card";
@@ -12,7 +12,7 @@ type PaymentVerifyResponse = {
   userId: string;
 };
 
-export default function PaymentCallbackPage() {
+function PaymentCallbackPageInner() {
   const router = useRouter();
   const params = useSearchParams();
 
@@ -20,6 +20,12 @@ export default function PaymentCallbackPage() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    if (!params) {
+      setError("Missing payment details. Please try again.");
+      setLoading(false);
+      return;
+    }
+
     const status = params.get("status");
     const txRef = params.get("tx_ref");
 
@@ -106,6 +112,24 @@ export default function PaymentCallbackPage() {
         )}
       </Card>
     </div>
+  );
+}
+
+export default function PaymentCallbackPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="mx-auto max-w-md space-y-6">
+          <Card className="space-y-4 p-6 text-center">
+            <p className="text-sm text-slate-600">
+              Verifying payment...
+            </p>
+          </Card>
+        </div>
+      }
+    >
+      <PaymentCallbackPageInner />
+    </Suspense>
   );
 }
 

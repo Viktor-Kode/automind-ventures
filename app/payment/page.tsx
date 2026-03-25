@@ -1,12 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { CreditCard } from "lucide-react";
 import { Card } from "../../components/ui/Card";
 import { Button } from "../../components/ui/Button";
 
-export default function PaymentPage() {
+function PaymentPageInner() {
   const params = useSearchParams();
   const router = useRouter();
   const [role, setRole] = useState<"owner" | "technician">("owner");
@@ -17,6 +17,7 @@ export default function PaymentPage() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    if (!params) return;
     const r = params.get("role");
     const id = params.get("userId");
     if (r === "technician" || r === "owner") setRole(r);
@@ -120,7 +121,9 @@ export default function PaymentPage() {
           <CreditCard className="h-5 w-5" />
         </div>
         <div>
-          <h1 className="text-xl font-semibold text-slate-900">Complete payment</h1>
+          <h1 className="text-xl font-semibold text-slate-900">
+            Complete payment
+          </h1>
           <p className="text-xs text-slate-500">
             Secure, one-time registration fee for your AutoMind access.
           </p>
@@ -153,6 +156,24 @@ export default function PaymentPage() {
         </p>
       </Card>
     </div>
+  );
+}
+
+export default function PaymentPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="mx-auto max-w-md space-y-6">
+          <Card className="space-y-4 p-6">
+            <p className="text-sm text-slate-600">
+              Loading payment page...
+            </p>
+          </Card>
+        </div>
+      }
+    >
+      <PaymentPageInner />
+    </Suspense>
   );
 }
 

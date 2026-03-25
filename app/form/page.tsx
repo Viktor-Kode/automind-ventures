@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { Car } from "lucide-react";
 import { Card } from "../../components/ui/Card";
 import { VehicleForm } from "../../components/forms/VehicleForm";
@@ -19,7 +20,15 @@ export default function FormPage() {
         </div>
       </div>
       <Card>
-        <VehicleForm />
+        <Suspense
+          fallback={
+            <p className="text-sm text-slate-600">
+              Loading your details...
+            </p>
+          }
+        >
+          <VehicleForm />
+        </Suspense>
       </Card>
     </div>
   );
