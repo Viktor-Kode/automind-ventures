@@ -1,0 +1,184 @@
+.task-item {
+  background: #f8f9fa;
+  border: 2px solid #e0e0e0;
+  border-radius: 12px;
+  padding: 20px;
+  transition: all 0.3s;
+  position: relative;
+}
+
+.task-item:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
+}
+
+.task-item.status-completed {
+  border-color: #38ef7d;
+  background: #f0fff4;
+}
+
+.task-item.status-in-progress {
+  border-color: #4facfe;
+  background: #f0f8ff;
+}
+
+.task-item.status-pending {
+  border-color: #f5576c;
+  background: #fff5f5;
+}
+
+.task-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 10px;
+}
+
+.task-header h4 {
+  margin: 0;
+  color: #333;
+  font-size: 18px;
+  flex: 1;
+  word-break: break-word;
+}
+
+.task-header h4.completed-title {
+  text-decoration: line-through;
+  color: #999;
+}
+
+.task-actions {
+  display: flex;
+  gap: 5px;
+}
+
+.btn-icon {
+  background: none;
+  border: none;
+  font-size: 18px;
+  cursor: pointer;
+  padding: 5px;
+  transition: transform 0.2s;
+}
+
+.btn-icon:hover {
+  transform: scale(1.2);
+}
+
+.task-description {
+  color: #666;
+  font-size: 14px;
+  margin-bottom: 15px;
+  line-height: 1.5;
+  word-break: break-word;
+}
+
+.task-meta {
+  margin-bottom: 15px;
+}
+
+.task-badges {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+}
+
+.priority-badge {
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.priority-badge.priority-high {
+  background: #ff4757;
+  color: white;
+}
+
+.priority-badge.priority-medium {
+  background: #ffa502;
+  color: white;
+}
+
+.priority-badge.priority-low {
+  background: #5f27cd;
+  color: white;
+}
+
+.category-badge {
+  padding: 4px 12px;
+  background: #667eea;
+  color: white;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.task-tags {
+  display: flex;
+  gap: 5px;
+  flex-wrap: wrap;
+}
+
+.tag {
+  padding: 2px 8px;
+  background: #e0e0e0;
+  color: #666;
+  border-radius: 4px;
+  font-size: 11px;
+}
+
+.task-due-date {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  color: #666;
+  margin-bottom: 15px;
+  padding: 8px;
+  background: white;
+  border-radius: 6px;
+}
+
+.task-due-date.overdue {
+  color: #ff4757;
+  font-weight: 600;
+}
+
+.overdue-badge {
+  background: #ff4757;
+  color: white;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 600;
+}
+
+.task-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 15px;
+  border-top: 1px solid #e0e0e0;
+}
+
+.status-select {
+  padding: 6px 12px;
+  border: 2px solid #e0e0e0;
+  border-radius: 6px;
+  font-size: 12px;
+  cursor: pointer;
+  background: white;
+}
+
+.status-select:focus {
+  outline: none;
+  border-color: #667eea;
+}
+
+.task-date {
+  font-size: 11px;
+  color: #999;
+}
