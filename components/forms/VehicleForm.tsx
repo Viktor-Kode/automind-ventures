@@ -1,10 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { Input } from "../ui/Input";
 import { Button } from "../ui/Button";
-import { validatePhone } from "../../lib/utils/validatePhone";
+import { FileUpload } from "../ui/FileUpload";
+import { uploadReceipt } from "../../lib/upload/uploadReceipt";
 
 type Role = "owner" | "technician";
 
@@ -19,46 +20,31 @@ interface StoredUser {
 
 export function VehicleForm() {
   const router = useRouter();
-  const params = useSearchParams();
   const [stored, setStored] = useState<StoredUser | null>(null);
   const [vehicleMake, setVehicleMake] = useState("");
   const [vehicleModel, setVehicleModel] = useState("");
   const [vehicleYear, setVehicleYear] = useState("");
-  const [technicianName, setTechnicianName] = useState("");
-  const [businessName, setBusinessName] = useState("");
-  const [phoneNumber, setPhoneNumber] = useState("");
-  const [techLocation, setTechLocation] = useState("");
-  const [specializedVehicle, setSpecializedVehicle] = useState("");
+  const [specialization, setSpecialization] = useState("");
+  const [receiptFile, setReceiptFile] = useState<File | null>(null);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
     const userString = window.sessionStorage.getItem("automind:user");
-    if (userString) {
-      try {
-        const parsed = JSON.parse(userString) as StoredUser;
-        setStored(parsed);
-      } catch {
-        // ignore
-      }
+    if (!userString) {
+      router.replace("/register");
+      return;
     }
-  }, []);
+    try {
+      setStored(JSON.parse(userString) as StoredUser);
+    } catch {
+      router.replace("/register");
+    }
+  }, [router]);
 
-  const roleFromParams = params?.get("role") as Role | null;
-  const userIdFromParams = params?.get("userId") || null;
-
-  const role = roleFromParams || stored?.role || "owner";
-  const userId = userIdFromParams || stored?.userId;
-
-  useEffect(() => {
-    if (!stored) return;
-    if (role !== "technician") return;
-
-    setTechnicianName(stored.fullName ?? "");
-    setPhoneNumber(stored.contactNumber ?? "");
-    setTechLocation(stored.location ?? "");
-  }, [stored, role]);
+  const role = stored?.role ?? "owner";
+  const userId = stored?.userId;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -85,14 +71,12 @@ export function VehicleForm() {
       ) {
         newErrors.vehicleYear = "Enter a valid 4-digit year.";
       }
-    } else {
-      if (!technicianName.trim()) newErrors.technicianName = "Name is required.";
-      if (!businessName.trim()) newErrors.businessName = "Business name is required.";
-      if (!phoneNumber.trim() || !validatePhone(phoneNumber)) {
-        newErrors.phoneNumber = "Enter a valid phone number.";
-      }
-      if (!techLocation.trim()) newErrors.techLocation = "Location is required.";
-      if (!specializedVehicle.trim()) newErrors.specializedVehicle = "Specialized vehicle is required.";
+    }
+
+    if (!receiptFile) {
+      newErrors.receipt = "Upload a screenshot of your payment receipt.";
+    } else if (!receiptFile.type.startsWith("image/")) {
+      newErrors.receipt = "Receipt must be an image file.";
     }
 
     setErrors(newErrors);
@@ -100,41 +84,67 @@ export function VehicleForm() {
 
     try {
       setLoading(true);
+      const receiptUrl = await uploadReceipt(receiptFile!);
+
+      const yearNum =
+        role === "owner" && vehicleYear ? Number(vehicleYear) : undefined;
+
+      const res = await fetch("/api/form/submit", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          userId,
+          role,
+          vehicleMake: role === "owner" ? vehicleMake : undefined,
+          vehicleModel: role === "owner" ? vehicleModel : undefined,
+          vehicleYear: yearNum,
+          technicianSpecialization:
+            role === "technician" ? specialization.trim() || undefined : undefined,
+          receiptUrl
+        })
+      });
+
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.message || "Could not save your submission");
+      }
+
       if (typeof window !== "undefined") {
         window.sessionStorage.setItem(
           "automind:form",
           JSON.stringify({
-            // Owner fields
             vehicleMake: role === "owner" ? vehicleMake : null,
             vehicleModel: role === "owner" ? vehicleModel : null,
             vehicleYear: role === "owner" && vehicleYear ? Number(vehicleYear) : null,
-
-            // Technician fields
-            technicianName: role === "technician" ? technicianName : null,
-            businessName: role === "technician" ? businessName : null,
-            phoneNumber: role === "technician" ? phoneNumber : null,
-            location: role === "technician" ? techLocation : null,
-            specializedVehicle: role === "technician" ? specializedVehicle : null
+            technicianSpecialization:
+              role === "technician" ? specialization.trim() || null : null,
+            receiptUrl
           })
         );
       }
 
       router.push("/success");
-    } catch (error) {
+    } catch {
       setErrors({
-        form: "Something went wrong. Please try again."
+        form: "Something went wrong. Please check your connection and try again."
       });
     } finally {
       setLoading(false);
     }
   };
 
+  if (!stored) {
+    return (
+      <p className="text-sm text-slate-600">Loading your details...</p>
+    );
+  }
+
   const title =
-    role === "owner" ? "Vehicle information" : "Technician details";
+    role === "owner" ? "Vehicle & receipt" : "Receipt & optional details";
   const description =
     role === "owner"
-      ? "Help us understand your vehicle so we can match you with the right support."
-      : "Share your business details so vehicle owners can reach the right technician.";
+      ? "Enter your vehicle details and upload proof of payment."
+      : "Upload your payment receipt. You may add an optional area of specialization.";
 
   return (
     <form className="space-y-5" onSubmit={handleSubmit}>
@@ -178,55 +188,27 @@ export function VehicleForm() {
           />
         </>
       ) : (
-        <>
-          <Input
-            label="Name"
-            id="technicianName"
-            value={technicianName}
-            onChange={(e) => setTechnicianName(e.target.value)}
-            error={errors.technicianName}
-            placeholder="Enter your name"
-          />
-          <Input
-            label="Name of Business"
-            id="businessName"
-            value={businessName}
-            onChange={(e) => setBusinessName(e.target.value)}
-            error={errors.businessName}
-            placeholder="e.g. Kemi Auto Repairs"
-          />
-          <Input
-            label="Phone Number"
-            id="phoneNumber"
-            value={phoneNumber}
-            onChange={(e) => setPhoneNumber(e.target.value)}
-            error={errors.phoneNumber}
-            placeholder="e.g. 0805 555 5555"
-            inputMode="numeric"
-          />
-          <Input
-            label="Location"
-            id="techLocation"
-            value={techLocation}
-            onChange={(e) => setTechLocation(e.target.value)}
-            error={errors.techLocation}
-            placeholder="City, State"
-          />
-          <Input
-            label="Specialized Vehicle"
-            id="specializedVehicle"
-            value={specializedVehicle}
-            onChange={(e) => setSpecializedVehicle(e.target.value)}
-            error={errors.specializedVehicle}
-            placeholder="e.g. Toyota vehicles, engine diagnostics"
-          />
-        </>
+        <Input
+          label="Specialization (optional)"
+          id="specialization"
+          value={specialization}
+          onChange={(e) => setSpecialization(e.target.value)}
+          error={errors.specialization}
+          placeholder="e.g. European vehicles, diagnostics"
+        />
       )}
 
+      <FileUpload
+        label="Payment receipt"
+        value={receiptFile}
+        onChange={setReceiptFile}
+        error={errors.receipt}
+        disabled={loading}
+      />
+
       <Button type="submit" loading={loading} className="w-full">
-        Complete Registration
+        Submit and finish
       </Button>
     </form>
   );
 }
-

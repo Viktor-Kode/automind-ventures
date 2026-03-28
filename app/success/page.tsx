@@ -2,10 +2,14 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { CheckCircle2, MessageCircle } from "lucide-react";
+import { CheckCircle2, MessageCircle, Receipt } from "lucide-react";
 import { Card } from "../../components/ui/Card";
 import { Button } from "../../components/ui/Button";
-import { formatWhatsAppMessage, WhatsAppPayload } from "../../lib/utils/formatWhatsAppMessage";
+import {
+  formatWhatsAppMessage,
+  WhatsAppPayload
+} from "../../lib/utils/formatWhatsAppMessage";
+import { siteUrl, whatsappBusinessNumber } from "../../lib/config/public";
 
 interface StoredUser {
   userId: string;
@@ -14,6 +18,13 @@ interface StoredUser {
   contactNumber: string;
   location: string;
   role: "owner" | "technician";
+}
+
+interface StoredForm {
+  vehicleMake?: string | null;
+  vehicleModel?: string | null;
+  vehicleYear?: number | null;
+  receiptUrl?: string | null;
 }
 
 export default function SuccessPage() {
@@ -28,23 +39,7 @@ export default function SuccessPage() {
 
     try {
       const user = JSON.parse(userString) as StoredUser;
-      const form = formString ? JSON.parse(formString) : {};
-
-      if (user.role === "technician") {
-        setPayload({
-          fullName: form.technicianName || user.fullName,
-          role: user.role,
-          contactNumber: form.phoneNumber || user.contactNumber,
-          whatsappNumber: user.whatsappNumber,
-          location: form.location || user.location,
-          businessName: form.businessName || null,
-          specializedVehicle: form.specializedVehicle || null,
-          vehicleMake: null,
-          vehicleModel: null,
-          vehicleYear: null
-        });
-        return;
-      }
+      const form: StoredForm = formString ? JSON.parse(formString) : {};
 
       setPayload({
         fullName: user.fullName,
@@ -52,9 +47,10 @@ export default function SuccessPage() {
         contactNumber: user.contactNumber,
         whatsappNumber: user.whatsappNumber,
         location: user.location,
-        vehicleMake: form.vehicleMake || null,
-        vehicleModel: form.vehicleModel || null,
-        vehicleYear: form.vehicleYear || null
+        vehicleMake: form.vehicleMake ?? null,
+        vehicleModel: form.vehicleModel ?? null,
+        vehicleYear: form.vehicleYear ?? null,
+        receiptUrl: form.receiptUrl ?? null
       });
     } catch {
       // ignore parse errors
@@ -63,8 +59,10 @@ export default function SuccessPage() {
 
   const handleWhatsApp = () => {
     if (!payload) return;
-    const text = formatWhatsAppMessage(payload);
-    const url = `https://wa.me/2348055906616?text=${text}`;
+    const origin =
+      typeof window !== "undefined" ? window.location.origin : siteUrl;
+    const text = formatWhatsAppMessage(payload, { origin });
+    const url = `https://wa.me/${whatsappBusinessNumber}?text=${text}`;
     window.open(url, "_blank");
   };
 
@@ -79,7 +77,8 @@ export default function SuccessPage() {
             Registration complete
           </h1>
           <p className="text-sm text-slate-500">
-            You are now ready to connect with AutoMind Ventures on WhatsApp.
+            Your details and receipt are saved. Open WhatsApp to send your summary to AutoMind
+            Ventures.
           </p>
         </div>
         <Button
@@ -90,23 +89,35 @@ export default function SuccessPage() {
           <span>Chat on WhatsApp</span>
         </Button>
         {payload && (
-          <div className="mt-4 rounded-lg bg-slate-50 p-3 text-left text-xs text-slate-600">
-            <p className="mb-1 font-semibold text-slate-700">Summary</p>
+          <div className="mt-4 space-y-2 rounded-lg bg-slate-50 p-3 text-left text-xs text-slate-600">
+            <p className="font-semibold text-slate-700">Summary</p>
             <p>Name: {payload.fullName}</p>
             <p>Role: {payload.role === "owner" ? "Vehicle Owner" : "Technician"}</p>
             <p>WhatsApp: {payload.whatsappNumber}</p>
-            <p>Contact: {payload.contactNumber}</p>
+            <p>Phone: {payload.contactNumber}</p>
             <p>Location: {payload.location}</p>
-            {payload.role === "technician" && (
+            {payload.role === "owner" ? (
               <>
-                <p>Business: {payload.businessName || "N/A"}</p>
-                <p>Specialized Vehicle: {payload.specializedVehicle || "N/A"}</p>
+                <p>Vehicle: {payload.vehicleMake || "—"} {payload.vehicleModel || ""}</p>
+                <p>Year: {payload.vehicleYear ?? "—"}</p>
               </>
+            ) : null}
+            {payload.receiptUrl && (
+              <p className="flex items-start gap-1.5 pt-1">
+                <Receipt className="mt-0.5 h-3.5 w-3.5 shrink-0 text-slate-500" />
+                <span className="break-all">
+                  Receipt:{" "}
+                  {payload.receiptUrl.startsWith("http")
+                    ? payload.receiptUrl
+                    : `${typeof window !== "undefined" ? window.location.origin : ""}${payload.receiptUrl}`}
+                </span>
+              </p>
             )}
           </div>
         )}
       </Card>
       <button
+        type="button"
         onClick={() => router.push("/")}
         className="mx-auto block text-xs font-medium text-slate-500 hover:text-primary-600"
       >
@@ -115,4 +126,3 @@ export default function SuccessPage() {
     </div>
   );
 }
-

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Car, MessageCircle } from "lucide-react";
+import { getWhatsAppHref } from "../../lib/config/public";
 
 export function Header() {
   return (
@@ -19,7 +20,7 @@ export function Header() {
           </div>
         </Link>
         <a
-          href="https://wa.me/2348055906616"
+          href={getWhatsAppHref()}
           target="_blank"
           rel="noreferrer"
           className="inline-flex items-center space-x-1 rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-medium text-slate-700 hover:border-primary-400 hover:text-primary-700"

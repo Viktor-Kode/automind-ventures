@@ -41,7 +41,7 @@ export function RegisterForm() {
 
     try {
       setLoading(true);
-      const res = await fetch("/api/register", {
+      const res = await fetch("/api/auth/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -57,7 +57,6 @@ export function RegisterForm() {
         throw new Error(data.message || "Registration failed");
       }
 
-      // store basic info in session for later steps
       if (typeof window !== "undefined") {
         window.sessionStorage.setItem(
           "automind:user",
@@ -72,8 +71,8 @@ export function RegisterForm() {
         );
       }
 
-      router.push(`/payment?role=${role}&userId=${data.userId}`);
-    } catch (error) {
+      router.push("/payment-details");
+    } catch {
       setErrors({ form: "Something went wrong. Please try again." });
     } finally {
       setLoading(false);
@@ -159,12 +158,12 @@ export function RegisterForm() {
         )}
       </div>
       <Button type="submit" loading={loading} className="w-full">
-        Continue to Payment
+        Continue
       </Button>
       <p className="text-xs text-slate-500">
-        Owners pay ₦5,000. Technicians pay ₦10,000. One-time registration fee.
+        Owners pay ₦5,000. Technicians pay ₦10,000. One-time registration fee via bank
+        transfer.
       </p>
     </form>
   );
 }
-

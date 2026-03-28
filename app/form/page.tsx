@@ -11,20 +11,16 @@ export default function FormPage() {
           <Car className="h-5 w-5" />
         </div>
         <div>
-          <h1 className="text-xl font-semibold text-slate-900">
-            Final details
-          </h1>
+          <h1 className="text-xl font-semibold text-slate-900">Payment & details</h1>
           <p className="text-xs text-slate-500">
-            A few more details to complete your AutoMind registration.
+            Upload your payment receipt and complete any remaining fields.
           </p>
         </div>
       </div>
       <Card>
         <Suspense
           fallback={
-            <p className="text-sm text-slate-600">
-              Loading your details...
-            </p>
+            <p className="text-sm text-slate-600">Loading your details...</p>
           }
         >
           <VehicleForm />
@@ -33,4 +29,3 @@ export default function FormPage() {
     </div>
   );
 }
-

@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import { connectDB } from "../../lib/db/connect";
-import { User } from "../../lib/db/models/User";
+import { connectDB } from "../../../lib/db/connect";
+import { User } from "../../../lib/db/models/User";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== "POST") {
@@ -34,7 +34,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         contactNumber,
         location,
         role,
-        paymentStatus: false
+        paymentStatus: "pending"
       });
       return res.status(200).json({ userId: user._id.toString() });
     } catch (createError) {
@@ -47,4 +47,3 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(500).json({ message: "Failed to save user" });
   }
 }
-

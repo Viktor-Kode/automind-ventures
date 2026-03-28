@@ -7,29 +7,30 @@ export interface WhatsAppPayload {
   vehicleMake?: string | null;
   vehicleModel?: string | null;
   vehicleYear?: number | null;
-  businessName?: string | null;
-  specializedVehicle?: string | null;
+  receiptUrl?: string | null;
 }
 
-export function formatWhatsAppMessage(data: WhatsAppPayload): string {
+function absoluteReceiptUrl(url: string | null | undefined, origin: string): string {
+  if (!url || !url.trim()) return "Uploaded";
+  const u = url.trim();
+  if (u.startsWith("http://") || u.startsWith("https://")) return u;
+  if (u.startsWith("/") && origin) return `${origin}${u}`;
+  return u;
+}
+
+export function formatWhatsAppMessage(
+  data: WhatsAppPayload,
+  options?: { origin?: string }
+): string {
+  const origin = options?.origin ?? "";
   const make = data.vehicleMake || "N/A";
   const model = data.vehicleModel || "N/A";
   const year = data.vehicleYear ? String(data.vehicleYear) : "N/A";
-  const business = data.businessName || "N/A";
-  const specialized = data.specializedVehicle || "N/A";
-
-  const technicianSection =
-    data.role === "technician"
-      ? `
-Technician Details:
-- Business: ${business}
-- Specialized Vehicle: ${specialized}
-`
-      : "";
+  const receipt = absoluteReceiptUrl(data.receiptUrl ?? null, origin);
 
   const base = `Hello AutoMind Ventures,
 
-I just completed my registration.
+I just completed my registration and payment.
 
 Name: ${data.fullName}
 Role: ${data.role === "owner" ? "Vehicle Owner" : "Technician"}
@@ -43,10 +44,9 @@ Vehicle Details:
 - Make: ${make}
 - Model: ${model}
 - Year: ${year}
-${technicianSection}
 
+Payment Receipt: ${receipt}
 Thank you.`;
 
   return encodeURIComponent(base);
 }
-

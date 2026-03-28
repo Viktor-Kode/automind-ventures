@@ -1,11 +1,21 @@
+import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import "./globals.css";
 import { Header } from "../components/layout/Header";
 import { Footer } from "../components/layout/Footer";
+import { siteUrl } from "../lib/config/public";
 
-export const metadata = {
-  title: "AutoMind Ventures",
-  description: "Connect with trusted automobile technicians via WhatsApp"
+export const metadata: Metadata = {
+  metadataBase: new URL(siteUrl),
+  title: { default: "AutoMind Ventures", template: "%s | AutoMind Ventures" },
+  description: "Connect with trusted automobile technicians via WhatsApp",
+  openGraph: {
+    type: "website",
+    locale: "en_NG",
+    siteName: "AutoMind Ventures",
+    url: siteUrl
+  },
+  robots: { index: true, follow: true }
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {
@@ -21,5 +31,3 @@ export default function RootLayout({ children }: { children: ReactNode }) {
     </html>
   );
 }
-
-

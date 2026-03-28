@@ -1,14 +1,17 @@
 # AutoMind Ventures Web App
 
-AutoMind Ventures is a Next.js web application that connects vehicle owners and automobile technicians through a paid, WhatsApp-based system.
+AutoMind Ventures is a Next.js web application that connects vehicle owners and automobile technicians through a manual bank payment, receipt upload, and WhatsApp handoff.
+
+**Production:** [automind-ventures.vercel.app](https://automind-ventures.vercel.app)
 
 ## Tech Stack
 
 - Next.js (App Router)
 - React 18
 - Tailwind CSS
-- lucide-react for icons
+- lucide-react
 - MongoDB with Mongoose
+- Vercel Blob (receipt uploads in production)
 
 ## Getting Started
 
@@ -20,11 +23,7 @@ npm install
 
 2. Configure environment:
 
-Create a `.env.local` file in the project root:
-
-```bash
-MONGODB_URI="your-mongodb-connection-string"
-```
+Copy `.env.example` to `.env.local` and set values (see below).
 
 3. Run the development server:
 
@@ -32,18 +31,33 @@ MONGODB_URI="your-mongodb-connection-string"
 npm run dev
 ```
 
-Then open `http://localhost:3000` in your browser.
+Open `http://localhost:3000`.
+
+## Environment Variables
+
+| Variable | Description |
+| -------- | ----------- |
+| `NEXT_PUBLIC_SITE_URL` | Public site URL (default: `https://automind-ventures.vercel.app`) |
+| `NEXT_PUBLIC_WHATSAPP_NUMBER` | Business WhatsApp for deep links (e.g. `2348055906616`) |
+| `MONGODB_URI` | MongoDB connection string; if unset, registration uses demo IDs without DB writes |
+| `BLOB_READ_WRITE_TOKEN` | Set automatically when Vercel Blob is linked to the project; required for receipt uploads on Vercel |
 
 ## User Flow
 
-1. Landing page (`/`) with a clear "Get Started" call to action.
-2. Registration page (`/register`) where users provide contact details and choose a role (vehicle owner or technician).
-3. Payment page (`/payment`) shows dynamic pricing based on role and simulates a Paystack/Flutterwave payment.
-4. Form page (`/form`) captures vehicle details for owners (or optional specialization for technicians).
-5. Success page (`/success`) summarizes details and deep-links into WhatsApp with a pre-formatted message.
+1. Landing (`/`) → Get Started  
+2. Registration (`/register`) → `POST /api/auth/register`  
+3. Bank details (`/payment-details`) → user pays offline  
+4. Form (`/form`) → vehicle details (owners) or optional specialization (technicians), receipt upload  
+5. Success (`/success`) → WhatsApp with pre-filled message  
+
+## Deploying on Vercel
+
+1. Import this repo and set **Root Directory** to the project root (if applicable).  
+2. Add environment variables in the Vercel project settings (at minimum `MONGODB_URI`, `NEXT_PUBLIC_SITE_URL`, `NEXT_PUBLIC_WHATSAPP_NUMBER`).  
+3. Under **Storage**, create a **Blob** store and connect it to the project so `BLOB_READ_WRITE_TOKEN` is available for receipt uploads.  
+4. Deploy; production URL: `https://automind-ventures.vercel.app` (or your assigned domain).
 
 ## Notes
 
-- Payment and verification are stubbed for demo purposes. Integrate Paystack or Flutterwave in `lib/payment/paystack.ts` and `/pages/api/payment/verify.ts` for production usage.
-- Ensure MongoDB is running and `MONGODB_URI` is correctly configured before relying on persistence.
-
+- Local development saves receipt files under `public/uploads/` (gitignored). Production on Vercel uses Vercel Blob.  
+- Without `MONGODB_URI`, the API falls back to demo user IDs so the UI can still be tested.
