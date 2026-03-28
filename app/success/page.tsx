@@ -5,10 +5,8 @@ import { useRouter } from "next/navigation";
 import { CheckCircle2, MessageCircle, Receipt } from "lucide-react";
 import { Card } from "../../components/ui/Card";
 import { Button } from "../../components/ui/Button";
-import {
-  formatWhatsAppMessage,
-  WhatsAppPayload
-} from "../../lib/utils/formatWhatsAppMessage";
+import { type WhatsAppPayload } from "../../lib/utils/formatWhatsAppMessage";
+import { openWhatsAppWithRegistration } from "../../lib/utils/shareToWhatsApp";
 import { siteUrl, whatsappBusinessNumber } from "../../lib/config/public";
 
 interface StoredUser {
@@ -30,6 +28,7 @@ interface StoredForm {
 export default function SuccessPage() {
   const router = useRouter();
   const [payload, setPayload] = useState<WhatsAppPayload | null>(null);
+  const [sharing, setSharing] = useState(false);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -57,13 +56,20 @@ export default function SuccessPage() {
     }
   }, []);
 
-  const handleWhatsApp = () => {
+  const handleWhatsApp = async () => {
     if (!payload) return;
     const origin =
       typeof window !== "undefined" ? window.location.origin : siteUrl;
-    const text = formatWhatsAppMessage(payload, { origin });
-    const url = `https://wa.me/${whatsappBusinessNumber}?text=${text}`;
-    window.open(url, "_blank");
+    try {
+      setSharing(true);
+      await openWhatsAppWithRegistration({
+        payload,
+        origin,
+        whatsappNumber: whatsappBusinessNumber
+      });
+    } finally {
+      setSharing(false);
+    }
   };
 
   return (
@@ -77,12 +83,14 @@ export default function SuccessPage() {
             Registration complete
           </h1>
           <p className="text-sm text-slate-500">
-            Your details and receipt are saved. Open WhatsApp to send your summary to AutoMind
-            Ventures.
+            Send your details to AutoMind on WhatsApp. On phones, your receipt image can be
+            included automatically when you pick WhatsApp in the share sheet. On desktop, add
+            the receipt manually if it is not attached.
           </p>
         </div>
         <Button
           onClick={handleWhatsApp}
+          loading={sharing}
           className="mt-2 inline-flex w-full items-center justify-center space-x-2"
         >
           <MessageCircle className="h-4 w-4" />
@@ -117,7 +125,7 @@ export default function SuccessPage() {
                       className="mx-auto max-h-40 rounded border border-slate-200 object-contain"
                     />
                     <p className="text-[11px] text-slate-500">
-                      Stored in this session only. WhatsApp message will say &quot;Uploaded&quot;.
+                      Use this preview if you need to attach the screenshot again in WhatsApp.
                     </p>
                   </>
                 ) : (

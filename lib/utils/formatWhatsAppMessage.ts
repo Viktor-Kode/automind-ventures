@@ -19,17 +19,18 @@ function absoluteReceiptUrl(url: string | null | undefined, origin: string): str
   return u;
 }
 
-export function formatWhatsAppMessage(
+export function getWhatsAppMessageText(
   data: WhatsAppPayload,
-  options?: { origin?: string }
+  options?: { origin?: string; receiptLine?: string }
 ): string {
   const origin = options?.origin ?? "";
   const make = data.vehicleMake || "N/A";
   const model = data.vehicleModel || "N/A";
   const year = data.vehicleYear ? String(data.vehicleYear) : "N/A";
-  const receipt = absoluteReceiptUrl(data.receiptUrl ?? null, origin);
+  const receipt =
+    options?.receiptLine ?? absoluteReceiptUrl(data.receiptUrl ?? null, origin);
 
-  const base = `Hello AutoMind Ventures,
+  return `Hello AutoMind Ventures,
 
 I just completed my registration and payment.
 
@@ -48,6 +49,11 @@ Vehicle Details:
 
 Payment Receipt: ${receipt}
 Thank you.`;
+}
 
-  return encodeURIComponent(base);
+export function formatWhatsAppMessage(
+  data: WhatsAppPayload,
+  options?: { origin?: string }
+): string {
+  return encodeURIComponent(getWhatsAppMessageText(data, options));
 }
