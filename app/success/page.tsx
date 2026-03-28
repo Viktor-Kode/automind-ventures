@@ -28,6 +28,7 @@ interface StoredForm {
 export default function SuccessPage() {
   const router = useRouter();
   const [payload, setPayload] = useState<WhatsAppPayload | null>(null);
+  const [sharing, setSharing] = useState(false);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -55,15 +56,20 @@ export default function SuccessPage() {
     }
   }, []);
 
-  const handleWhatsApp = () => {
+  const handleWhatsApp = async () => {
     if (!payload) return;
     const origin =
       typeof window !== "undefined" ? window.location.origin : siteUrl;
-    openWhatsAppWithRegistration({
-      payload,
-      origin,
-      whatsappNumber: whatsappBusinessNumber
-    });
+    try {
+      setSharing(true);
+      await openWhatsAppWithRegistration({
+        payload,
+        origin,
+        whatsappNumber: whatsappBusinessNumber
+      });
+    } finally {
+      setSharing(false);
+    }
   };
 
   return (
@@ -77,12 +83,20 @@ export default function SuccessPage() {
             Registration complete
           </h1>
           <p className="text-sm text-slate-500">
-            Opens WhatsApp with your details ready to send. If you have a receipt image, attach
-            it in the chat after it opens.
+            {payload?.receiptUrl?.startsWith("data:image/") ? (
+              <>
+                With a saved receipt, your device may show a share menu first—choose{" "}
+                <strong>WhatsApp</strong> to open the chat with your receipt image and message
+                together.
+              </>
+            ) : (
+              <>Opens WhatsApp with your details ready to send.</>
+            )}
           </p>
         </div>
         <Button
           onClick={handleWhatsApp}
+          loading={sharing}
           className="mt-2 inline-flex w-full items-center justify-center space-x-2"
         >
           <MessageCircle className="h-4 w-4" />

@@ -11,9 +11,10 @@ export interface WhatsAppPayload {
 }
 
 function absoluteReceiptUrl(url: string | null | undefined, origin: string): string {
-  if (!url || !url.trim()) return "Uploaded";
+  if (!url || !url.trim()) return "Not provided";
   const u = url.trim();
-  if (u.startsWith("data:")) return "Uploaded";
+  // Data URLs cannot appear in wa.me text; we send the image separately via Web Share when possible.
+  if (u.startsWith("data:")) return "Receipt image (sent as attachment when you share to WhatsApp)";
   if (u.startsWith("http://") || u.startsWith("https://")) return u;
   if (u.startsWith("/") && origin) return `${origin}${u}`;
   return u;
