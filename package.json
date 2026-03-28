@@ -6,7 +6,9 @@
     "node": ">=18.17.0"
   },
   "scripts": {
+    "clean": "node -e \"require('fs').rmSync('.next',{recursive:true,force:true});\"",
     "dev": "next dev",
+    "dev:clean": "npm run clean && npm run dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
