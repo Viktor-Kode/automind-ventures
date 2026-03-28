@@ -10,7 +10,8 @@ AutoMind Ventures is a Next.js web application that connects vehicle owners and 
 - React 18
 - Tailwind CSS
 - lucide-react
-- MongoDB with Mongoose (receipt images stored on the user record)
+
+There is **no database**: registration and form data live in the browser session; the API only validates input and returns a data-URL receipt for the success screen. The WhatsApp message lists the receipt as &quot;Uploaded&quot;.
 
 ## Getting Started
 
@@ -20,9 +21,7 @@ AutoMind Ventures is a Next.js web application that connects vehicle owners and 
 npm install
 ```
 
-2. Configure environment:
-
-Copy `.env.example` to `.env.local` and set values (see below).
+2. Optional: copy `.env.example` to `.env.local` and set `NEXT_PUBLIC_SITE_URL` / `NEXT_PUBLIC_WHATSAPP_NUMBER` if you need overrides.
 
 3. Run the development server:
 
@@ -38,7 +37,6 @@ Open `http://localhost:3000`.
 | -------- | ----------- |
 | `NEXT_PUBLIC_SITE_URL` | Public site URL (default: `https://automind-ventures.vercel.app`) |
 | `NEXT_PUBLIC_WHATSAPP_NUMBER` | Business WhatsApp for deep links (e.g. `2348055906616`) |
-| `MONGODB_URI` | MongoDB connection string; if unset, demo user IDs are used and receipt previews stay in the browser session only |
 
 ## User Flow
 
@@ -50,11 +48,10 @@ Open `http://localhost:3000`.
 
 ## Deploying on Vercel
 
-1. Import this repo and set **Root Directory** to the project root (if applicable).  
-2. Add environment variables in the Vercel project settings (at minimum `MONGODB_URI`, `NEXT_PUBLIC_SITE_URL`, `NEXT_PUBLIC_WHATSAPP_NUMBER`).  
-3. Deploy; production URL: `https://automind-ventures.vercel.app` (or your assigned domain).
+1. Import this repo.  
+2. Optionally set `NEXT_PUBLIC_SITE_URL` and `NEXT_PUBLIC_WHATSAPP_NUMBER`.  
+3. Deploy.
 
 ## Notes
 
-- With `MONGODB_URI` set, receipt images are stored in MongoDB and served at `/api/receipt/[userId]`.  
-- Without MongoDB, demo user IDs are used and the receipt preview is kept in `sessionStorage` only; the WhatsApp message lists the receipt as &quot;Uploaded&quot;.
+- Remove `MONGODB_URI` from Vercel if it was added earlier; it is unused.

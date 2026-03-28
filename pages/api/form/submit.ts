@@ -1,8 +1,4 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import mongoose from "mongoose";
-import { connectDB, getMongoUri } from "../../../lib/db/connect";
-import { User } from "../../../lib/db/models/User";
-import { getServerOrigin } from "../../../lib/config/site";
 
 export const config = {
   api: {
@@ -25,7 +21,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     vehicleMake,
     vehicleModel,
     vehicleYear,
-    technicianSpecialization,
     receiptBase64,
     receiptMimeType
   } = req.body || {};
@@ -67,64 +62,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
   }
 
-  try {
-    const uri = getMongoUri();
-    const shouldSkipDb =
-      !uri || uri.includes("CHANGE_ME_SECURELY");
-
-    if (shouldSkipDb || !mongoose.Types.ObjectId.isValid(String(userId))) {
-      const dataUrl = `data:${mime};base64,${buffer.toString("base64")}`;
-      return res.status(200).json({
-        success: true,
-        skippedDb: true,
-        receiptUrl: dataUrl
-      });
-    }
-
-    try {
-      await connectDB();
-    } catch {
-      return res.status(503).json({
-        message:
-          "Cannot connect to the database. Check MongoDB Atlas Network Access and MONGODB_URI in Vercel."
-      });
-    }
-
-    const yearNum =
-      vehicleYear !== undefined && vehicleYear !== null
-        ? Number(vehicleYear)
-        : undefined;
-
-    const origin = getServerOrigin();
-    const receiptUrl = `${origin}/api/receipt/${userId}`;
-
-    const updated = await User.findByIdAndUpdate(
-      userId,
-      {
-        ...(role === "owner"
-          ? {
-              vehicleMake: String(vehicleMake).trim(),
-              vehicleModel: String(vehicleModel).trim(),
-              vehicleYear: yearNum
-            }
-          : {
-              technicianSpecialization: technicianSpecialization?.trim() || undefined
-            }),
-        receiptUrl,
-        receiptImageBase64: buffer.toString("base64"),
-        receiptMimeType: mime,
-        paymentStatus: "submitted"
-      },
-      { new: true }
-    );
-
-    if (!updated) {
-      return res.status(404).json({ message: "User not found" });
-    }
-
-    return res.status(200).json({ success: true, receiptUrl });
-  } catch (error) {
-    console.error("Form submit error", error);
-    return res.status(500).json({ message: "Failed to save form data" });
-  }
+  const dataUrl = `data:${mime};base64,${buffer.toString("base64")}`;
+  return res.status(200).json({
+    success: true,
+    receiptUrl: dataUrl
+  });
 }
