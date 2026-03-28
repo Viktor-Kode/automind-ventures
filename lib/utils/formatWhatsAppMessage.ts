@@ -13,6 +13,7 @@ export interface WhatsAppPayload {
 function absoluteReceiptUrl(url: string | null | undefined, origin: string): string {
   if (!url || !url.trim()) return "Uploaded";
   const u = url.trim();
+  if (u.startsWith("data:")) return "Uploaded";
   if (u.startsWith("http://") || u.startsWith("https://")) return u;
   if (u.startsWith("/") && origin) return `${origin}${u}`;
   return u;

@@ -103,15 +103,31 @@ export default function SuccessPage() {
               </>
             ) : null}
             {payload.receiptUrl && (
-              <p className="flex items-start gap-1.5 pt-1">
-                <Receipt className="mt-0.5 h-3.5 w-3.5 shrink-0 text-slate-500" />
-                <span className="break-all">
-                  Receipt:{" "}
-                  {payload.receiptUrl.startsWith("http")
-                    ? payload.receiptUrl
-                    : `${typeof window !== "undefined" ? window.location.origin : ""}${payload.receiptUrl}`}
-                </span>
-              </p>
+              <div className="space-y-2 pt-1">
+                <p className="flex items-center gap-1.5 font-medium text-slate-700">
+                  <Receipt className="h-3.5 w-3.5 shrink-0 text-slate-500" />
+                  Receipt
+                </p>
+                {payload.receiptUrl.startsWith("data:image/") ? (
+                  <>
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={payload.receiptUrl}
+                      alt="Payment receipt"
+                      className="mx-auto max-h-40 rounded border border-slate-200 object-contain"
+                    />
+                    <p className="text-[11px] text-slate-500">
+                      Stored in this session only. WhatsApp message will say &quot;Uploaded&quot;.
+                    </p>
+                  </>
+                ) : (
+                  <p className="break-all text-[11px]">
+                    {payload.receiptUrl.startsWith("http")
+                      ? payload.receiptUrl
+                      : `${typeof window !== "undefined" ? window.location.origin : ""}${payload.receiptUrl}`}
+                  </p>
+                )}
+              </div>
             )}
           </div>
         )}

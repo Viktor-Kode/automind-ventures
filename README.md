@@ -10,8 +10,7 @@ AutoMind Ventures is a Next.js web application that connects vehicle owners and 
 - React 18
 - Tailwind CSS
 - lucide-react
-- MongoDB with Mongoose
-- Vercel Blob (receipt uploads in production)
+- MongoDB with Mongoose (receipt images stored on the user record)
 
 ## Getting Started
 
@@ -39,8 +38,7 @@ Open `http://localhost:3000`.
 | -------- | ----------- |
 | `NEXT_PUBLIC_SITE_URL` | Public site URL (default: `https://automind-ventures.vercel.app`) |
 | `NEXT_PUBLIC_WHATSAPP_NUMBER` | Business WhatsApp for deep links (e.g. `2348055906616`) |
-| `MONGODB_URI` | MongoDB connection string; if unset, registration uses demo IDs without DB writes |
-| `BLOB_READ_WRITE_TOKEN` | Set automatically when Vercel Blob is linked to the project; required for receipt uploads on Vercel |
+| `MONGODB_URI` | MongoDB connection string; if unset, demo user IDs are used and receipt previews stay in the browser session only |
 
 ## User Flow
 
@@ -54,10 +52,9 @@ Open `http://localhost:3000`.
 
 1. Import this repo and set **Root Directory** to the project root (if applicable).  
 2. Add environment variables in the Vercel project settings (at minimum `MONGODB_URI`, `NEXT_PUBLIC_SITE_URL`, `NEXT_PUBLIC_WHATSAPP_NUMBER`).  
-3. Under **Storage**, create a **Blob** store and connect it to the project so `BLOB_READ_WRITE_TOKEN` is available for receipt uploads.  
-4. Deploy; production URL: `https://automind-ventures.vercel.app` (or your assigned domain).
+3. Deploy; production URL: `https://automind-ventures.vercel.app` (or your assigned domain).
 
 ## Notes
 
-- Local development saves receipt files under `public/uploads/` (gitignored). Production on Vercel uses Vercel Blob.  
-- Without `MONGODB_URI`, the API falls back to demo user IDs so the UI can still be tested.
+- With `MONGODB_URI` set, receipt images are stored in MongoDB and served at `/api/receipt/[userId]`.  
+- Without MongoDB, demo user IDs are used and the receipt preview is kept in `sessionStorage` only; the WhatsApp message lists the receipt as &quot;Uploaded&quot;.

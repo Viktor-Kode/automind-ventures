@@ -12,7 +12,11 @@ export interface IUser {
   vehicleModel?: string;
   vehicleYear?: number;
   technicianSpecialization?: string;
+  /** Public URL for WhatsApp (e.g. /api/receipt/[id] on this site). */
   receiptUrl?: string;
+  /** Raw image bytes stored as base64 when not using external Blob storage. */
+  receiptImageBase64?: string;
+  receiptMimeType?: string;
   paymentStatus: PaymentStatus;
   createdAt: Date;
 }
@@ -28,6 +32,8 @@ const userSchema = new Schema<IUser>({
   vehicleYear: Number,
   technicianSpecialization: String,
   receiptUrl: String,
+  receiptImageBase64: String,
+  receiptMimeType: String,
   paymentStatus: {
     type: String,
     enum: ["pending", "submitted"],

@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { Input } from "../ui/Input";
 import { Button } from "../ui/Button";
 import { FileUpload } from "../ui/FileUpload";
-import { uploadReceipt } from "../../lib/upload/uploadReceipt";
+import { fileToReceiptPayload } from "../../lib/upload/receiptPayload";
 
 type Role = "owner" | "technician";
 
@@ -84,7 +84,9 @@ export function VehicleForm() {
 
     try {
       setLoading(true);
-      const receiptUrl = await uploadReceipt(receiptFile!);
+      const { receiptBase64, receiptMimeType } = await fileToReceiptPayload(
+        receiptFile!
+      );
 
       const yearNum =
         role === "owner" && vehicleYear ? Number(vehicleYear) : undefined;
@@ -100,7 +102,8 @@ export function VehicleForm() {
           vehicleYear: yearNum,
           technicianSpecialization:
             role === "technician" ? specialization.trim() || undefined : undefined,
-          receiptUrl
+          receiptBase64,
+          receiptMimeType
         })
       });
 
@@ -108,6 +111,9 @@ export function VehicleForm() {
       if (!res.ok) {
         throw new Error(data.message || "Could not save your submission");
       }
+
+      const receiptUrl =
+        typeof data.receiptUrl === "string" ? data.receiptUrl : null;
 
       if (typeof window !== "undefined") {
         window.sessionStorage.setItem(
