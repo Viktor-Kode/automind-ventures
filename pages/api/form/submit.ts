@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import mongoose from "mongoose";
-import { connectDB } from "../../../lib/db/connect";
+import { connectDB, getMongoUri } from "../../../lib/db/connect";
 import { User } from "../../../lib/db/models/User";
 import { getServerOrigin } from "../../../lib/config/site";
 
@@ -68,9 +68,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   try {
-    const uri = process.env.MONGODB_URI;
+    const uri = getMongoUri();
     const shouldSkipDb =
-      !uri || uri.includes("CHANGE_ME_SECURELY") || uri.trim().length === 0;
+      !uri || uri.includes("CHANGE_ME_SECURELY");
 
     if (shouldSkipDb || !mongoose.Types.ObjectId.isValid(String(userId))) {
       const dataUrl = `data:${mime};base64,${buffer.toString("base64")}`;
@@ -81,7 +81,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       });
     }
 
-    await connectDB();
+    try {
+      await connectDB();
+    } catch {
+      return res.status(503).json({
+        message:
+          "Cannot connect to the database. Check MongoDB Atlas Network Access and MONGODB_URI in Vercel."
+      });
+    }
 
     const yearNum =
       vehicleYear !== undefined && vehicleYear !== null

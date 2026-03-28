@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import mongoose from "mongoose";
-import { connectDB } from "../../../lib/db/connect";
+import { connectDB, getMongoUri } from "../../../lib/db/connect";
 import { User } from "../../../lib/db/models/User";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -15,12 +15,17 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   try {
-    const uri = process.env.MONGODB_URI;
-    if (!uri || uri.includes("CHANGE_ME_SECURELY") || uri.trim().length === 0) {
+    const uri = getMongoUri();
+    if (!uri || uri.includes("CHANGE_ME_SECURELY")) {
       return res.status(404).end();
     }
 
-    await connectDB();
+    try {
+      await connectDB();
+    } catch {
+      return res.status(503).end();
+    }
+
     const user = await User.findById(id)
       .select("receiptImageBase64 receiptMimeType")
       .lean();
