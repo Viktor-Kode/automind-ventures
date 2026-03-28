@@ -1,8 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
-import { User, Wrench } from "lucide-react";
 import { Input } from "../ui/Input";
 import { Checkbox } from "../ui/Checkbox";
 import { RadioGroup } from "../ui/RadioGroup";
@@ -22,7 +21,7 @@ export function RegisterForm() {
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const newErrors: Record<string, string> = {};
 

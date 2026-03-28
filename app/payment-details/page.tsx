@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Building2, Landmark, User, Wallet, ArrowRight } from "lucide-react";
+import { Building2, Landmark, User as UserIcon, Wallet, ArrowRight } from "lucide-react";
 import { Card } from "../../components/ui/Card";
 import { Button } from "../../components/ui/Button";
 
@@ -101,7 +101,7 @@ export default function PaymentDetailsPage() {
           </div>
           <div className="flex items-start justify-between gap-4">
             <dt className="flex items-center gap-2 text-slate-500">
-              <User className="h-4 w-4 shrink-0" />
+              <UserIcon className="h-4 w-4 shrink-0" />
               Account name
             </dt>
             <dd className="text-right font-medium text-slate-900">{BANK.accountName}</dd>
