@@ -2,7 +2,7 @@
 # In the Render dashboard, set environment variables (do not commit secrets):
 #   MONGODB_URI, JWT_SECRET, FRONTEND_URL,
 #   FLUTTERWAVE_SECRET_KEY, FLUTTERWAVE_PUBLIC_KEY, FLUTTERWAVE_SECRET_HASH
-# Webhook URL for Flutterwave: https://<your-service>.onrender.com/api/payments/webhook
+# Webhook URL for Flutterwave: https://automind-ventures.onrender.com/api/payments/webhook
 
 services:
   - type: web

@@ -28,7 +28,6 @@ interface StoredForm {
 export default function SuccessPage() {
   const router = useRouter();
   const [payload, setPayload] = useState<WhatsAppPayload | null>(null);
-  const [sharing, setSharing] = useState(false);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -56,20 +55,15 @@ export default function SuccessPage() {
     }
   }, []);
 
-  const handleWhatsApp = async () => {
+  const handleWhatsApp = () => {
     if (!payload) return;
     const origin =
       typeof window !== "undefined" ? window.location.origin : siteUrl;
-    try {
-      setSharing(true);
-      await openWhatsAppWithRegistration({
-        payload,
-        origin,
-        whatsappNumber: whatsappBusinessNumber
-      });
-    } finally {
-      setSharing(false);
-    }
+    openWhatsAppWithRegistration({
+      payload,
+      origin,
+      whatsappNumber: whatsappBusinessNumber
+    });
   };
 
   return (
@@ -83,14 +77,12 @@ export default function SuccessPage() {
             Registration complete
           </h1>
           <p className="text-sm text-slate-500">
-            Send your details to AutoMind on WhatsApp. On phones, your receipt image can be
-            included automatically when you pick WhatsApp in the share sheet. On desktop, add
-            the receipt manually if it is not attached.
+            Opens WhatsApp with your details ready to send. If you have a receipt image, attach
+            it in the chat after it opens.
           </p>
         </div>
         <Button
           onClick={handleWhatsApp}
-          loading={sharing}
           className="mt-2 inline-flex w-full items-center justify-center space-x-2"
         >
           <MessageCircle className="h-4 w-4" />

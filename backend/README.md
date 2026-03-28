@@ -101,6 +101,7 @@ npm install
 ```env
 REACT_APP_API_URL=http://localhost:5000/api
 ```
+Production example: `REACT_APP_API_URL=https://automind-ventures.onrender.com/api`
 
 4. Start the React development server:
 ```bash
