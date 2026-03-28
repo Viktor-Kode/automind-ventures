@@ -3,10 +3,10 @@ import type { ReactNode } from "react";
 import "./globals.css";
 import { Header } from "../components/layout/Header";
 import { Footer } from "../components/layout/Footer";
-import { siteUrl } from "../lib/config/public";
+import { getMetadataBase, siteUrl } from "../lib/config/public";
 
 export const metadata: Metadata = {
-  metadataBase: new URL(siteUrl),
+  metadataBase: getMetadataBase(),
   title: { default: "AutoMind Ventures", template: "%s | AutoMind Ventures" },
   description: "Connect with trusted automobile technicians via WhatsApp",
   openGraph: {
