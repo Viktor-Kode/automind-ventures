@@ -22,6 +22,7 @@ interface StoredForm {
   vehicleMake?: string | null;
   vehicleModel?: string | null;
   vehicleYear?: number | null;
+  technicianSpecialization?: string | null;
   receiptUrl?: string | null;
 }
 
@@ -52,6 +53,7 @@ export default function SuccessPage() {
         vehicleMake: form.vehicleMake ?? null,
         vehicleModel: form.vehicleModel ?? null,
         vehicleYear: form.vehicleYear ?? null,
+        technicianSpecialization: form.technicianSpecialization ?? null,
         receiptUrl: form.receiptUrl ?? null
       });
     } catch {
@@ -169,7 +171,12 @@ export default function SuccessPage() {
                 <p>Vehicle: {payload.vehicleMake || "—"} {payload.vehicleModel || ""}</p>
                 <p>Year: {payload.vehicleYear ?? "—"}</p>
               </>
-            ) : null}
+            ) : (
+              <p>
+                Specialization:{" "}
+                {(payload.technicianSpecialization ?? "").trim() || "—"}
+              </p>
+            )}
             {payload.receiptUrl && (
               <div className="space-y-2 pt-1">
                 <p className="flex items-center gap-1.5 font-medium text-slate-700">

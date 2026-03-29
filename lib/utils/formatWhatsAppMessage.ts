@@ -7,6 +7,7 @@ export interface WhatsAppPayload {
   vehicleMake?: string | null;
   vehicleModel?: string | null;
   vehicleYear?: number | null;
+  technicianSpecialization?: string | null;
   receiptUrl?: string | null;
 }
 
@@ -37,6 +38,21 @@ export function getWhatsAppMessageText(
   const receipt =
     options?.receiptLine ?? absoluteReceiptUrl(data.receiptUrl ?? null, origin);
 
+  const spec = (data.technicianSpecialization ?? "").trim();
+  const specializationLine =
+    data.role === "technician"
+      ? `\nSpecialization: ${spec || "—"}`
+      : "";
+
+  const vehicleBlock =
+    data.role === "owner"
+      ? `
+Vehicle Details:
+- Make: ${make}
+- Model: ${model}
+- Year: ${year}`
+      : "";
+
   return `Hello AutoMind Ventures,
 
 I just completed my registration and payment.
@@ -47,12 +63,7 @@ Role: ${data.role === "owner" ? "Vehicle Owner" : "Technician"}
 Phone: ${data.contactNumber}
 WhatsApp: ${data.whatsappNumber}
 
-Location: ${data.location}
-
-Vehicle Details:
-- Make: ${make}
-- Model: ${model}
-- Year: ${year}
+Location: ${data.location}${specializationLine}${vehicleBlock}
 
 Payment Receipt: ${receipt}
 Thank you.`;

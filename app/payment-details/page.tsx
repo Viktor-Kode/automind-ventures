@@ -18,9 +18,9 @@ interface StoredUser {
 }
 
 const BANK = {
-  name: "GTBank",
-  accountNumber: "0123456789",
-  accountName: "AutoMind Ventures"
+  name: "FCMB",
+  accountNumber: "7614830019",
+  accountName: "TRUST AUTOMIND VENTURE"
 } as const;
 
 export default function PaymentDetailsPage() {
