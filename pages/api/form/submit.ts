@@ -1,4 +1,8 @@
 import type { NextApiRequest, NextApiResponse } from "next";
+import {
+  RECEIPT_MAX_BYTES,
+  uploadReceiptToPublicUrl
+} from "../../../lib/server/uploadReceiptBlob";
 
 export const config = {
   api: {
@@ -7,8 +11,6 @@ export const config = {
     }
   }
 };
-
-const MAX_BYTES = 5 * 1024 * 1024;
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== "POST") {
@@ -36,8 +38,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(400).json({ message: "Invalid receipt image data" });
   }
 
-  if (buffer.length === 0 || buffer.length > MAX_BYTES) {
-    return res.status(400).json({ message: "Receipt image must be under 5MB" });
+  if (buffer.length === 0 || buffer.length > RECEIPT_MAX_BYTES) {
+    return res.status(400).json({
+      message: "Receipt image must be under 4MB (server upload limit)"
+    });
   }
 
   const mime = typeof receiptMimeType === "string" && receiptMimeType.startsWith("image/")
@@ -62,9 +66,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
   }
 
+  const publicUrl = await uploadReceiptToPublicUrl(buffer, mime, userId);
   const dataUrl = `data:${mime};base64,${buffer.toString("base64")}`;
+  const receiptUrl = publicUrl ?? dataUrl;
+
   return res.status(200).json({
     success: true,
-    receiptUrl: dataUrl
+    receiptUrl
   });
 }

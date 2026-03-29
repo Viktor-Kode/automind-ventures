@@ -13,10 +13,16 @@ export interface WhatsAppPayload {
 function absoluteReceiptUrl(url: string | null | undefined, origin: string): string {
   if (!url || !url.trim()) return "Not provided";
   const u = url.trim();
-  // Data URLs cannot appear in wa.me text; we send the image separately via Web Share when possible.
-  if (u.startsWith("data:")) return "Receipt image (sent as attachment when you share to WhatsApp)";
-  if (u.startsWith("http://") || u.startsWith("https://")) return u;
-  if (u.startsWith("/") && origin) return `${origin}${u}`;
+  // Data URLs cannot be embedded in wa.me; user attaches the image in WhatsApp after opening.
+  if (u.startsWith("data:")) {
+    return "Saved on AutoMind — I will attach the receipt image in chat";
+  }
+  if (u.startsWith("http://") || u.startsWith("https://")) {
+    return u;
+  }
+  if (u.startsWith("/") && origin) {
+    return `${origin}${u}`;
+  }
   return u;
 }
 

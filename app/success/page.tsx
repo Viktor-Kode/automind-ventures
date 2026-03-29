@@ -28,7 +28,9 @@ interface StoredForm {
 export default function SuccessPage() {
   const router = useRouter();
   const [payload, setPayload] = useState<WhatsAppPayload | null>(null);
-  const [sharing, setSharing] = useState(false);
+  const [userId, setUserId] = useState<string | null>(null);
+  const [whatsappLoading, setWhatsappLoading] = useState(false);
+  const [whatsappNotice, setWhatsappNotice] = useState<string | null>(null);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -40,6 +42,7 @@ export default function SuccessPage() {
       const user = JSON.parse(userString) as StoredUser;
       const form: StoredForm = formString ? JSON.parse(formString) : {};
 
+      setUserId(user.userId);
       setPayload({
         fullName: user.fullName,
         role: user.role,
@@ -60,16 +63,67 @@ export default function SuccessPage() {
     if (!payload) return;
     const origin =
       typeof window !== "undefined" ? window.location.origin : siteUrl;
-    try {
-      setSharing(true);
-      await openWhatsAppWithRegistration({
-        payload,
-        origin,
-        whatsappNumber: whatsappBusinessNumber
-      });
-    } finally {
-      setSharing(false);
+    setWhatsappNotice(null);
+
+    let effective: WhatsAppPayload = payload;
+    const receipt = payload.receiptUrl;
+
+    if (
+      receipt?.startsWith("data:image/") &&
+      userId &&
+      typeof window !== "undefined"
+    ) {
+      setWhatsappLoading(true);
+      try {
+        const comma = receipt.indexOf(",");
+        const meta = receipt.slice(0, comma);
+        const base64 = receipt.slice(comma + 1);
+        const mimeMatch = meta.match(/^data:(image\/[^;]+)/);
+        const receiptMimeType = mimeMatch?.[1] || "image/jpeg";
+
+        const res = await fetch("/api/receipt/publish", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            userId,
+            receiptBase64: base64,
+            receiptMimeType
+          })
+        });
+        const data = (await res.json()) as { message?: string; url?: string };
+
+        if (res.ok && typeof data.url === "string") {
+          effective = { ...payload, receiptUrl: data.url };
+          setPayload(effective);
+          const formString = window.sessionStorage.getItem("automind:form");
+          if (formString) {
+            try {
+              const form = JSON.parse(formString) as StoredForm;
+              window.sessionStorage.setItem(
+                "automind:form",
+                JSON.stringify({ ...form, receiptUrl: data.url })
+              );
+            } catch {
+              // ignore
+            }
+          }
+        } else if (data.message) {
+          setWhatsappNotice(data.message);
+        }
+      } catch {
+        setWhatsappNotice(
+          "Could not upload the receipt for a link. Your message will still open; attach the image in WhatsApp if needed."
+        );
+      } finally {
+        setWhatsappLoading(false);
+      }
     }
+
+    openWhatsAppWithRegistration({
+      payload: effective,
+      origin,
+      whatsappNumber: whatsappBusinessNumber
+    });
   };
 
   return (
@@ -83,20 +137,20 @@ export default function SuccessPage() {
             Registration complete
           </h1>
           <p className="text-sm text-slate-500">
-            {payload?.receiptUrl?.startsWith("data:image/") ? (
-              <>
-                With a saved receipt, your device may show a share menu first—choose{" "}
-                <strong>WhatsApp</strong> to open the chat with your receipt image and message
-                together.
-              </>
-            ) : (
-              <>Opens WhatsApp with your details ready to send.</>
-            )}
+            Opens WhatsApp with your registration details. If your receipt is hosted
+            online, the message includes a link so WhatsApp can show a preview (not an
+            uploaded file).
           </p>
         </div>
+        {whatsappNotice ? (
+          <p className="rounded-lg bg-amber-50 px-3 py-2 text-left text-xs text-amber-900">
+            {whatsappNotice}
+          </p>
+        ) : null}
         <Button
           onClick={handleWhatsApp}
-          loading={sharing}
+          loading={whatsappLoading}
+          disabled={!payload || whatsappLoading}
           className="mt-2 inline-flex w-full items-center justify-center space-x-2"
         >
           <MessageCircle className="h-4 w-4" />
@@ -131,7 +185,8 @@ export default function SuccessPage() {
                       className="mx-auto max-h-40 rounded border border-slate-200 object-contain"
                     />
                     <p className="text-[11px] text-slate-500">
-                      Use this preview if you need to attach the screenshot again in WhatsApp.
+                      If receipt hosting is not configured, attach this image manually in
+                      WhatsApp after the chat opens.
                     </p>
                   </>
                 ) : (
