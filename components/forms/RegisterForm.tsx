@@ -160,7 +160,7 @@ export function RegisterForm() {
         Continue
       </Button>
       <p className="text-xs text-slate-500">
-        Owners pay ₦5,000. Technicians pay ₦10,000. One-time registration fee via bank
+        Owners pay ₦10,000. Technicians pay ₦20,000. One-time registration fee via bank
         transfer.
       </p>
     </form>

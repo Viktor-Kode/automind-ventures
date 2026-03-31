@@ -51,7 +51,7 @@ export default function PaymentDetailsPage() {
     );
   }
 
-  const amount = user.role === "owner" ? 5000 : 10000;
+  const amount = user.role === "owner" ? 10000 : 20000;
   const roleLabel = user.role === "owner" ? "Vehicle Owner" : "Technician";
 
   return (
