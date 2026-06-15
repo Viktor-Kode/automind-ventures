@@ -1,19 +1,31 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import "./globals.css";
-import { Header } from "../components/layout/Header";
-import { Footer } from "../components/layout/Footer";
-import { getMetadataBase, siteUrl } from "../lib/config/public";
+import Navbar from "../components/Navbar";
+import Footer from "../components/Footer";
 
 export const metadata: Metadata = {
-  metadataBase: getMetadataBase(),
-  title: { default: "AutoMind Ventures", template: "%s | AutoMind Ventures" },
-  description: "Connect with trusted automobile technicians via WhatsApp",
+  title: {
+    default: "GearboxTraining — Toyota/Lexus Gearbox Repair Training",
+    template: "%s | GearboxTraining"
+  },
+  description:
+    "Professional 5-day hands-on Toyota/Lexus automatic gearbox repair training. Learn from certified experts. Get your certification. Limited slots available.",
+  keywords: [
+    "gearbox repair training",
+    "Toyota gearbox",
+    "Lexus gearbox",
+    "automatic transmission",
+    "mechanic training Nigeria",
+    "gearbox certification"
+  ],
   openGraph: {
     type: "website",
     locale: "en_NG",
-    siteName: "AutoMind Ventures",
-    url: siteUrl
+    siteName: "GearboxTraining",
+    title: "Toyota/Lexus Gearbox Repair Training — 5 Days Hands-On",
+    description:
+      "Master automatic gearbox repair in just 5 days. Certified training. Limited slots."
   },
   robots: { index: true, follow: true }
 };
@@ -21,11 +33,9 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en">
-      <body className="flex min-h-screen flex-col bg-slate-50 text-slate-900">
-        <Header />
-        <main className="flex-1">
-          <div className="mx-auto max-w-5xl px-4 py-8">{children}</div>
-        </main>
+      <body className="flex min-h-screen flex-col bg-[#0A0F1E] text-white">
+        <Navbar />
+        <main className="flex-1">{children}</main>
         <Footer />
       </body>
     </html>
