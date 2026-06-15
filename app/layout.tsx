@@ -19,6 +19,10 @@ export const metadata: Metadata = {
     "mechanic training Nigeria",
     "gearbox certification"
   ],
+  icons: {
+    icon: "/favicon.svg",
+    shortcut: "/favicon.svg"
+  },
   openGraph: {
     type: "website",
     locale: "en_NG",

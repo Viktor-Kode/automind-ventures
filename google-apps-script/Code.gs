@@ -6,7 +6,8 @@
  * 1: RefCode | 2: Name | 3: Phone | 4: Location | 5: Experience
  * 6: Reason | 7: CanAttend | 8: Status | 9: ReceiptURL | 10: Timestamp
  *
- * Google Drive folder ID — change this to your Drive folder ID
+ * NOTE: POST requests use application/x-www-form-urlencoded.
+ * Read params from e.parameter (NOT e.postData.contents).
  */
 var DRIVE_FOLDER_ID = "1--0uLijXmrweYmC01C6isPXsVbwHVX3B";
 var SHEET_NAME = "Applicants";
@@ -16,7 +17,6 @@ function getSheet() {
   var sheet = ss.getSheetByName(SHEET_NAME);
   if (!sheet) {
     sheet = ss.insertSheet(SHEET_NAME);
-    // Write header row
     sheet.appendRow([
       "RefCode", "Name", "Phone", "Location", "Experience",
       "Reason", "CanAttend", "Status", "ReceiptURL", "Timestamp"
@@ -31,11 +31,12 @@ function generateRefCode(rowCount) {
 }
 
 // ============================================================
-// doPost — routes by action
+// doPost — reads from e.parameter (form-urlencoded)
 // ============================================================
 function doPost(e) {
   try {
-    var params = JSON.parse(e.postData.contents);
+    // Works with application/x-www-form-urlencoded bodies
+    var params = e.parameter;
     var action = params.action;
 
     if (action === "submit") {
@@ -48,12 +49,12 @@ function doPost(e) {
       return jsonResponse({ success: false, error: "Unknown action: " + action });
     }
   } catch (err) {
-    return jsonResponse({ success: false, error: err.message });
+    return jsonResponse({ success: false, error: String(err) });
   }
 }
 
 // ============================================================
-// doGet — routes by action
+// doGet — query string params
 // ============================================================
 function doGet(e) {
   try {
@@ -65,7 +66,7 @@ function doGet(e) {
       return jsonResponse({ success: false, error: "Unknown action: " + action });
     }
   } catch (err) {
-    return jsonResponse({ success: false, error: err.message });
+    return jsonResponse({ success: false, error: String(err) });
   }
 }
 
@@ -75,9 +76,8 @@ function doGet(e) {
 function handleSubmit(params) {
   var sheet = getSheet();
   var lastRow = sheet.getLastRow();
-  // Subtract 1 for the header row; start RefCode from 1
-  var rowCount = lastRow; // header is row 1, so first applicant becomes GBT-001
-  var refCode = generateRefCode(rowCount);
+  // lastRow=1 means only header exists → first applicant is GBT-001
+  var refCode = generateRefCode(lastRow);
 
   sheet.appendRow([
     refCode,
@@ -99,28 +99,25 @@ function handleSubmit(params) {
 // action=upload — save base64 file to Drive, update ReceiptURL
 // ============================================================
 function handleUpload(params) {
-  var ref = params.ref;
+  var ref       = params.ref;
   var fileBase64 = params.fileBase64;
-  var fileName = params.fileName || ("receipt_" + ref);
-  var mimeType = params.mimeType || "application/octet-stream";
+  var fileName  = params.fileName || ("receipt_" + ref);
+  var mimeType  = params.mimeType || "application/octet-stream";
 
   if (!ref || !fileBase64) {
     return jsonResponse({ success: false, error: "ref and fileBase64 are required." });
   }
 
-  // Decode base64
   var decoded = Utilities.newBlob(
     Utilities.base64Decode(fileBase64),
     mimeType,
     fileName
   );
 
-  // Save to Drive folder
   var folder;
   try {
     folder = DriveApp.getFolderById(DRIVE_FOLDER_ID);
   } catch (e) {
-    // If folder not found, use root
     folder = DriveApp.getRootFolder();
   }
 
@@ -130,14 +127,13 @@ function handleUpload(params) {
 
   var fileUrl = "https://drive.google.com/file/d/" + file.getId() + "/view";
 
-  // Update the ReceiptURL column (col 9) for matching RefCode
+  // Update ReceiptURL (col 9) and Status (col 8)
   var sheet = getSheet();
   var data = sheet.getDataRange().getValues();
-
   for (var i = 1; i < data.length; i++) {
     if (data[i][0] === ref) {
-      sheet.getRange(i + 1, 9).setValue(fileUrl); // ReceiptURL
-      sheet.getRange(i + 1, 8).setValue("awaiting_verification"); // Status
+      sheet.getRange(i + 1, 9).setValue(fileUrl);
+      sheet.getRange(i + 1, 8).setValue("awaiting_verification");
       break;
     }
   }
@@ -149,7 +145,7 @@ function handleUpload(params) {
 // action=updateStatus — find row by RefCode, update Status
 // ============================================================
 function handleUpdateStatus(params) {
-  var ref = params.ref;
+  var ref       = params.ref;
   var newStatus = params.status;
 
   if (!ref || !newStatus) {
@@ -162,7 +158,7 @@ function handleUpdateStatus(params) {
 
   for (var i = 1; i < data.length; i++) {
     if (data[i][0] === ref) {
-      sheet.getRange(i + 1, 8).setValue(newStatus); // Status is column 8
+      sheet.getRange(i + 1, 8).setValue(newStatus);
       found = true;
       break;
     }
@@ -186,15 +182,16 @@ function handleGetAll() {
     return jsonResponse({ rows: [] });
   }
 
-  var headers = ["refCode", "name", "phone", "location", "experience",
-                 "reason", "canAttend", "status", "receiptUrl", "timestamp"];
+  var headers = [
+    "refCode", "name", "phone", "location", "experience",
+    "reason", "canAttend", "status", "receiptUrl", "timestamp"
+  ];
 
   var rows = [];
   for (var i = 1; i < data.length; i++) {
     var row = {};
     for (var j = 0; j < headers.length; j++) {
       var val = data[i][j];
-      // Convert Date objects to ISO string
       row[headers[j]] = val instanceof Date ? val.toISOString() : String(val);
     }
     rows.push(row);
@@ -204,7 +201,7 @@ function handleGetAll() {
 }
 
 // ============================================================
-// Helper: return JSON ContentService response
+// Helper: JSON response
 // ============================================================
 function jsonResponse(obj) {
   return ContentService
