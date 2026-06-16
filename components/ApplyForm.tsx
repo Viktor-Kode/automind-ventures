@@ -6,10 +6,10 @@ import { User, Phone, MapPin, GraduationCap, MessageSquare, Calendar, Loader2, A
 
 const EXPERIENCE_OPTIONS = [
   { value: "", label: "Select your experience level" },
-  { value: "Rewire ", },
-  { value: "Mechanic", },
-  { value: "Gear master", },
-
+  { value: "Rewire ", label: "Rewire — Learning the trade" },
+  { value: "Mechanic", label: "Mechanic — Working professional" },
+  { value: "Gear master", label: "Gear master — Interested in maintenance" },
+  { value: "Other", label: "Other" }
 ];
 
 interface FormData {
