@@ -10,9 +10,9 @@ export async function POST(req: NextRequest) {
     const { name, phone, location, experience, reason, canAttend } = body;
 
     // Validate required fields
-    if (!name?.trim() || !phone?.trim() || !location?.trim() || !experience || !reason?.trim() || !canAttend) {
+    if (!name?.trim() || !phone?.trim() || !location?.trim() || !experience || !canAttend) {
       return NextResponse.json(
-        { success: false, error: "All fields are required." },
+        { success: false, error: "All required fields must be filled." },
         { status: 400 }
       );
     }
@@ -29,7 +29,7 @@ export async function POST(req: NextRequest) {
       phone: phone.trim(),
       location: location.trim(),
       experience,
-      reason: reason.trim().slice(0, 200),
+      reason: (reason ?? "").trim().slice(0, 200),
       canAttend
     });
 

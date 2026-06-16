@@ -212,6 +212,7 @@ export default function ApplyForm() {
             value={form.reason}
             onChange={handleChange}
             className="form-input pl-10 resize-none"
+
           />
         </div>
         <p className="text-white/40 text-xs mt-1 text-right">
@@ -229,11 +230,10 @@ export default function ApplyForm() {
           {["Yes", "No"].map((val) => (
             <label
               key={val}
-              className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-lg border cursor-pointer transition-all duration-200 ${
-                form.canAttend === val
+              className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-lg border cursor-pointer transition-all duration-200 ${form.canAttend === val
                   ? "bg-[#F5A623]/20 border-[#F5A623] text-[#F5A623] font-semibold"
                   : "border-white/20 text-white/60 hover:border-white/40"
-              }`}
+                }`}
             >
               <input
                 type="radio"
