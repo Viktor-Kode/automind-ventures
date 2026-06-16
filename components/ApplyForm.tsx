@@ -52,8 +52,7 @@ export default function ApplyForm() {
       return "Enter a valid phone number (digits only).";
     if (!form.location.trim()) return "Location is required.";
     if (!form.experience) return "Please select your experience level.";
-    if (!form.reason.trim()) return "Please tell us why you want this training.";
-    if (!form.canAttend) return "Please answer whether you can attend all 5 days.";
+    if (!form.canAttend) return "Please answer whether you can attend all 2 days.";
     return null;
   };
 
@@ -200,7 +199,7 @@ export default function ApplyForm() {
       <div>
         <label htmlFor="reason" className="form-label">
           Why do you want this training?{" "}
-          <span className="text-[#F5A623]">*</span>
+          <span className="text-white/40 text-xs font-normal">(Optional)</span>
         </label>
         <div className="relative">
           <MessageSquare className="absolute left-3 top-3 w-4 h-4 text-white/40" />
@@ -213,7 +212,6 @@ export default function ApplyForm() {
             value={form.reason}
             onChange={handleChange}
             className="form-input pl-10 resize-none"
-            required
           />
         </div>
         <p className="text-white/40 text-xs mt-1 text-right">
@@ -224,7 +222,7 @@ export default function ApplyForm() {
       {/* Can attend */}
       <div>
         <label className="form-label">
-          Can you attend all 5 days?{" "}
+          Can you attend all 2 days?{" "}
           <span className="text-[#F5A623]">*</span>
         </label>
         <div className="flex gap-3">

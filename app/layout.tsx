@@ -10,7 +10,7 @@ export const metadata: Metadata = {
     template: "%s | GearboxTraining"
   },
   description:
-    "Professional 5-day hands-on Toyota/Lexus automatic gearbox repair training. Learn from certified experts. Get your certification. Limited slots available.",
+    "Professional 2-day hands-on Toyota/Lexus automatic gearbox repair training. Learn from certified experts. Get your certification. Limited slots available.",
   keywords: [
     "gearbox repair training",
     "Toyota gearbox",
@@ -27,9 +27,9 @@ export const metadata: Metadata = {
     type: "website",
     locale: "en_NG",
     siteName: "GearboxTraining",
-    title: "Toyota/Lexus Gearbox Repair Training — 5 Days Hands-On",
+    title: "Toyota/Lexus Gearbox Repair Training — 2 Days Hands-On",
     description:
-      "Master automatic gearbox repair in just 5 days. Certified training. Limited slots."
+      "Master automatic gearbox repair in just 2 days. Certified training. Limited slots."
   },
   robots: { index: true, follow: true }
 };

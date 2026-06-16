@@ -2,7 +2,6 @@ import Link from "next/link";
 import { Wrench } from "lucide-react";
 
 export default function Footer() {
-  const waNumber = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER ?? "";
   const year = new Date().getFullYear();
 
   return (
@@ -20,7 +19,7 @@ export default function Footer() {
               </span>
             </Link>
             <p className="text-white/50 text-sm text-center md:text-left max-w-xs">
-              Professional Toyota/Lexus gearbox repair training. 5 days
+              Professional Toyota/Lexus gearbox repair training. 2 days
               hands-on. Certified.
             </p>
           </div>
@@ -34,22 +33,6 @@ export default function Footer() {
               >
                 Apply Now
               </Link>
-              <Link
-                href="/admin"
-                className="text-white/60 hover:text-[#F5A623] text-sm transition-colors"
-              >
-                Admin
-              </Link>
-              {waNumber && (
-                <a
-                  href={`https://wa.me/${waNumber}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-white/60 hover:text-[#F5A623] text-sm transition-colors"
-                >
-                  WhatsApp
-                </a>
-              )}
             </div>
             <p className="text-white/30 text-xs">
               © {year} GearboxTraining. All rights reserved.

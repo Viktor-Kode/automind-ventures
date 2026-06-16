@@ -45,6 +45,8 @@ function doPost(e) {
       return handleUpload(params);
     } else if (action === "updateStatus") {
       return handleUpdateStatus(params);
+    } else if (action === "deleteApplicant") {
+      return handleDeleteApplicant(params);
     } else {
       return jsonResponse({ success: false, error: "Unknown action: " + action });
     }
@@ -159,6 +161,35 @@ function handleUpdateStatus(params) {
   for (var i = 1; i < data.length; i++) {
     if (data[i][0] === ref) {
       sheet.getRange(i + 1, 8).setValue(newStatus);
+      found = true;
+      break;
+    }
+  }
+
+  if (!found) {
+    return jsonResponse({ success: false, error: "RefCode not found: " + ref });
+  }
+
+  return jsonResponse({ success: true });
+}
+
+// ============================================================
+// action=deleteApplicant — find row by RefCode, delete row
+// ============================================================
+function handleDeleteApplicant(params) {
+  var ref = params.ref;
+
+  if (!ref) {
+    return jsonResponse({ success: false, error: "ref is required." });
+  }
+
+  var sheet = getSheet();
+  var data = sheet.getDataRange().getValues();
+  var found = false;
+
+  for (var i = 1; i < data.length; i++) {
+    if (data[i][0] === ref) {
+      sheet.deleteRow(i + 1);
       found = true;
       break;
     }

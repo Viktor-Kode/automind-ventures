@@ -23,7 +23,7 @@ export interface SubmitApplicationPayload {
 
 export interface UploadReceiptPayload {
   ref: string;
-  phone: string;
+  phone?: string;
   fileBase64: string;
   fileName: string;
   mimeType: string;
@@ -115,4 +115,10 @@ export async function updateApplicantStatus(
   status: string
 ): Promise<{ success: boolean }> {
   return postScript<{ success: boolean }>({ action: "updateStatus", ref, status });
+}
+
+export async function deleteApplicant(
+  ref: string
+): Promise<{ success: boolean }> {
+  return postScript<{ success: boolean }>({ action: "deleteApplicant", ref });
 }

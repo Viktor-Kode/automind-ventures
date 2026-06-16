@@ -7,7 +7,8 @@ import {
   X,
   Download,
   RefreshCw,
-  MessageCircle
+  MessageCircle,
+  Trash2
 } from "lucide-react";
 import StatusBadge from "./StatusBadge";
 import { Applicant } from "../lib/sheets";
@@ -41,7 +42,6 @@ export default function AdminTable({ initialApplicants, adminPassword }: AdminTa
   const [approvedRef, setApprovedRef] = useState<{ ref: string; name: string; phone: string } | null>(null);
 
   const waNumber = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER ?? "";
-  const trainingDate = process.env.NEXT_PUBLIC_TRAINING_DATE ?? "TBD";
 
   const filtered =
     tab === "all" ? applicants : applicants.filter((a) => a.status === tab);
@@ -96,6 +96,33 @@ export default function AdminTable({ initialApplicants, adminPassword }: AdminTa
     }
   };
 
+  const handleDelete = async (ref: string) => {
+    if (!window.confirm("Are you sure you want to permanently delete this applicant? This action cannot be undone.")) {
+      return;
+    }
+    setActionLoading(`${ref}-delete`);
+    try {
+      const res = await fetch("/api/delete-applicant", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${adminPassword}`
+        },
+        body: JSON.stringify({ ref })
+      });
+      const data = await res.json();
+      if (data.success) {
+        setApplicants((prev) => prev.filter((a) => a.refCode !== ref));
+      } else {
+        alert(data.error ?? "Failed to delete applicant.");
+      }
+    } catch (err: unknown) {
+      alert("An error occurred while deleting the applicant.");
+    } finally {
+      setActionLoading(null);
+    }
+  };
+
   const handleExportCSV = () => {
     const csv = toCSV(filtered as unknown as Record<string, string>[], CSV_HEADERS);
     downloadCSV(csv, `gearbox-applicants-${tab}-${Date.now()}.csv`);
@@ -132,7 +159,7 @@ export default function AdminTable({ initialApplicants, adminPassword }: AdminTa
           </div>
           <a
             href={`https://wa.me/${approvedRef.phone}?text=${encodeURIComponent(
-              `Hi ${approvedRef.name}, your payment has been confirmed! Your training reference is *${approvedRef.ref}*. Training starts ${trainingDate}. We'll send you the group link shortly. Welcome aboard! 🎉`
+              `Hi ${approvedRef.name}, your payment has been confirmed! Your training reference is *${approvedRef.ref}*. We'll send you the group link shortly. Welcome aboard! 🎉`
             )}`}
             target="_blank"
             rel="noopener noreferrer"
@@ -290,6 +317,16 @@ export default function AdminTable({ initialApplicants, adminPassword }: AdminTa
                           Reject
                         </button>
                       )}
+                      <button
+                        id={`delete-${applicant.refCode}`}
+                        onClick={() => handleDelete(applicant.refCode)}
+                        disabled={actionLoading === `${applicant.refCode}-delete`}
+                        title="Delete"
+                        className="flex items-center gap-1 bg-red-600/20 hover:bg-red-600/35 text-red-300 border border-red-600/40 px-2 py-1 rounded text-xs font-medium transition-all disabled:opacity-50"
+                      >
+                        <Trash2 className="w-3 h-3" />
+                        Delete
+                      </button>
                     </div>
                   </td>
                 </tr>

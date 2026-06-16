@@ -6,16 +6,12 @@ import PaymentCard from "../../components/PaymentCard";
 import {
   Clock,
   Upload,
-  Phone,
   CheckCircle2,
   Loader2,
   AlertCircle,
-  MessageCircle,
   ChevronLeft
 } from "lucide-react";
 import Link from "next/link";
-
-const WA_NUMBER = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER ?? "";
 
 function Countdown({ targetMs }: { targetMs: number }) {
   const [timeLeft, setTimeLeft] = useState<number>(targetMs - Date.now());
@@ -52,7 +48,6 @@ export default function PayPageClient() {
   const targetMs = useRef(Date.now() + 24 * 60 * 60 * 1000).current;
 
   const [file, setFile] = useState<File | null>(null);
-  const [phone, setPhone] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [submitted, setSubmitted] = useState(false);
@@ -79,10 +74,6 @@ export default function PayPageClient() {
       setError("Please attach your payment receipt.");
       return;
     }
-    if (!phone.trim()) {
-      setError("Please confirm your WhatsApp number.");
-      return;
-    }
 
     setLoading(true);
     setError(null);
@@ -103,7 +94,6 @@ export default function PayPageClient() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ref,
-          phone: phone.trim(),
           fileBase64: base64,
           fileName: file.name,
           mimeType: file.type
@@ -141,20 +131,7 @@ export default function PayPageClient() {
           Watch your WhatsApp —{" "}
           <strong className="text-white font-mono">{ref}</strong> is your reference.
         </p>
-        {WA_NUMBER && (
-          <a
-            href={`https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(
-              `Hi, I just submitted my payment receipt. My reference is ${ref}.`
-            )}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            id="receipt-whatsapp-btn"
-            className="btn-primary inline-flex items-center gap-2 px-8 py-4 text-base"
-          >
-            <MessageCircle className="w-5 h-5" />
-            Message Us on WhatsApp
-          </a>
-        )}
+
       </div>
     );
   }
@@ -252,28 +229,7 @@ export default function PayPageClient() {
               </label>
             </div>
 
-            {/* Phone confirmation */}
-            <div>
-              <label htmlFor="confirm-phone" className="form-label">
-                Confirm WhatsApp Number <span className="text-[#F5A623]">*</span>
-              </label>
-              <div className="relative">
-                <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/40" />
-                <input
-                  id="confirm-phone"
-                  type="tel"
-                  placeholder="e.g. 08012345678"
-                  value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
-                  className="form-input pl-10"
-                  inputMode="numeric"
-                  required
-                />
-              </div>
-              <p className="text-white/30 text-xs mt-1">
-                We&apos;ll send your confirmation to this number.
-              </p>
-            </div>
+
 
             <button
               id="submit-receipt-btn"

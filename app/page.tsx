@@ -3,29 +3,25 @@ import Link from "next/link";
 import {
   CheckCircle2,
   MapPin,
-  Calendar,
   Users,
   Star,
   ChevronRight,
   Wrench,
   Award,
-  Clock,
-  MessageCircle
+  Clock
 } from "lucide-react";
 import { getAllApplicants } from "../lib/sheets";
 
 export const metadata: Metadata = {
-  title: "Toyota/Lexus Gearbox Repair Training — 5 Days Hands-On",
+  title: "Toyota/Lexus Gearbox Repair Training — 2 Days Hands-On",
   description:
-    "Join Nigeria's premier Toyota/Lexus automatic gearbox repair training. 5 days hands-on. Get certified. Limited slots available."
+    "Join Nigeria's premier Toyota/Lexus automatic gearbox repair training. 2 days hands-on. Get certified. Limited slots available."
 };
 
 export const revalidate = 60; // Revalidate every 60s for slot count
 
 const TOTAL_SLOTS = parseInt(process.env.NEXT_PUBLIC_TOTAL_SLOTS ?? "12");
-const TRAINING_DATE = process.env.NEXT_PUBLIC_TRAINING_DATE ?? "TBD";
 const TRAINING_LOCATION = process.env.NEXT_PUBLIC_TRAINING_LOCATION ?? "TBD";
-const WA_NUMBER = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER ?? "";
 
 const LEARN_POINTS = [
   "How automatic gearboxes work — components, fluid circuits, and failure modes",
@@ -51,7 +47,7 @@ const TESTIMONIALS = [
   {
     name: "Ibrahim K.",
     location: "Abuja",
-    text: "Came as a car owner, left understanding everything about my Lexus RX gearbox. Incredible value for just 5 days.",
+    text: "Came as a car owner, left understanding everything about my Lexus RX gearbox. Incredible value for just 2 days.",
     stars: 5
   }
 ];
@@ -90,7 +86,7 @@ export default async function HomePage() {
           <h1 className="text-4xl sm:text-5xl md:text-6xl font-black text-white leading-tight mb-4 max-w-4xl mx-auto">
             Toyota/Lexus Gearbox Repair Training
             <br />
-            <span className="text-[#F5A623]">5 Days. Hands-On. Certified.</span>
+            <span className="text-[#F5A623]">2 Days. Hands-On. Certified.</span>
           </h1>
 
           <p className="text-white/60 text-lg max-w-2xl mx-auto mb-8">
@@ -117,17 +113,6 @@ export default async function HomePage() {
                 Slots Full — Join Waitlist
               </button>
             )}
-            {WA_NUMBER && (
-              <a
-                href={`https://wa.me/${WA_NUMBER}?text=Hi, I want to know more about the GearboxTraining program.`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="btn-secondary flex items-center gap-2 px-8 py-4 text-lg w-full sm:w-auto"
-              >
-                <MessageCircle className="w-5 h-5" />
-                Ask a Question
-              </a>
-            )}
           </div>
 
           {/* Hero image placeholder */}
@@ -150,18 +135,13 @@ export default async function HomePage() {
         <div className="max-w-6xl mx-auto px-4 sm:px-6 py-5">
           <div className="flex flex-wrap items-center justify-center gap-6 md:gap-10 text-sm">
             <div className="flex items-center gap-2 text-white/70">
-              <Calendar className="w-4 h-4 text-[#F5A623]" />
-              <span className="font-medium">{TRAINING_DATE}</span>
-            </div>
-            <div className="hidden md:block w-px h-4 bg-white/20" />
-            <div className="flex items-center gap-2 text-white/70">
               <MapPin className="w-4 h-4 text-[#F5A623]" />
               <span className="font-medium">{TRAINING_LOCATION}</span>
             </div>
             <div className="hidden md:block w-px h-4 bg-white/20" />
             <div className="flex items-center gap-2 text-white/70">
               <Clock className="w-4 h-4 text-[#F5A623]" />
-              <span className="font-medium">5 Days Intensive</span>
+              <span className="font-medium">2 Days Intensive</span>
             </div>
             <div className="hidden md:block w-px h-4 bg-white/20" />
             <div className="flex items-center gap-2">
@@ -182,7 +162,7 @@ export default async function HomePage() {
         <div className="text-center mb-10">
           <h2 className="section-title mb-3">What You&apos;ll Learn</h2>
           <p className="text-white/50 max-w-xl mx-auto">
-            A structured 5-day curriculum covering everything from theory to workshop-ready practice.
+            A structured 2-day curriculum covering everything from theory to workshop-ready practice.
           </p>
         </div>
 
@@ -207,7 +187,7 @@ export default async function HomePage() {
             <div>
               <p className="text-[#F5A623] font-bold text-sm">Certified Completion</p>
               <p className="text-white/60 text-sm leading-relaxed mt-0.5">
-                Receive a recognized certificate on Day 5 that validates your gearbox repair skills.
+                Receive a recognized certificate on Day 2 that validates your gearbox repair skills.
               </p>
             </div>
           </div>
@@ -330,19 +310,6 @@ export default async function HomePage() {
         </Link>
       </div>
 
-      {/* ===== WHATSAPP FLOAT ===== */}
-      {WA_NUMBER && (
-        <a
-          href={`https://wa.me/${WA_NUMBER}?text=Hi, I'm interested in the Toyota/Lexus Gearbox Training.`}
-          target="_blank"
-          rel="noopener noreferrer"
-          id="whatsapp-float-btn"
-          aria-label="Chat on WhatsApp"
-          className="fixed bottom-20 right-4 md:bottom-6 z-50 w-14 h-14 bg-[#25D366] hover:bg-[#20bd5a] rounded-full flex items-center justify-center shadow-lg shadow-green-900/40 transition-transform hover:scale-110"
-        >
-          <MessageCircle className="w-7 h-7 text-white fill-white" />
-        </a>
-      )}
     </>
   );
 }

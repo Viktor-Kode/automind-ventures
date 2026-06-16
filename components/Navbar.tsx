@@ -6,7 +6,6 @@ import { Menu, X, Wrench } from "lucide-react";
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
-  const waNumber = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER ?? "";
 
   return (
     <nav className="sticky top-0 z-50 bg-[#0A0F1E]/95 backdrop-blur-sm border-b border-white/10">
@@ -36,16 +35,6 @@ export default function Navbar() {
             >
               Apply
             </Link>
-            {waNumber && (
-              <a
-                href={`https://wa.me/${waNumber}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="bg-[#F5A623] hover:bg-[#e8961a] text-[#0A0F1E] text-sm font-bold py-2 px-4 rounded-lg transition-colors"
-              >
-                WhatsApp Us
-              </a>
-            )}
           </div>
 
           {/* Mobile hamburger */}
@@ -77,17 +66,6 @@ export default function Navbar() {
           >
             Apply
           </Link>
-          {waNumber && (
-            <a
-              href={`https://wa.me/${waNumber}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="bg-[#F5A623] text-[#0A0F1E] font-bold py-3 px-4 rounded-lg text-center mt-1"
-              onClick={() => setOpen(false)}
-            >
-              WhatsApp Us
-            </a>
-          )}
         </div>
       )}
     </nav>

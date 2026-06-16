@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import AdminTable from "../../components/AdminTable";
 import { Lock, Loader2, Eye, EyeOff, AlertCircle, Wrench } from "lucide-react";
+import { Applicant } from "../../lib/sheets";
 
 const SESSION_KEY = "gbt_admin_auth";
 
@@ -12,7 +13,7 @@ export default function AdminPage() {
   const [loading, setLoading] = useState(false);
   const [authError, setAuthError] = useState<string | null>(null);
   const [authedPassword, setAuthedPassword] = useState<string | null>(null);
-  const [applicants, setApplicants] = useState<never[]>([]);
+  const [applicants, setApplicants] = useState<Applicant[]>([]);
 
   // Check sessionStorage on mount
   useEffect(() => {

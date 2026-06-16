@@ -62,7 +62,7 @@ export default function ApplyPage() {
                 {
                   step: "4",
                   title: "Attend Training",
-                  desc: `5 days hands-on. Leave certified.`
+                  desc: `2 days hands-on. Leave certified.`
                 }
               ].map((item) => (
                 <li key={item.step} className="flex gap-3">

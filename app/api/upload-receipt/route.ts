@@ -8,9 +8,9 @@ const MAX_BASE64_SIZE = 5 * 1024 * 1024 * 1.4; // ~5MB in base64
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { ref, phone, fileBase64, fileName, mimeType } = body;
+    const { ref, fileBase64, fileName, mimeType } = body;
 
-    if (!ref || !phone?.trim() || !fileBase64 || !fileName || !mimeType) {
+    if (!ref || !fileBase64 || !fileName || !mimeType) {
       return NextResponse.json(
         { success: false, error: "All fields are required." },
         { status: 400 }
@@ -40,7 +40,7 @@ export async function POST(req: NextRequest) {
     // Upload to Google Drive via Apps Script
     const uploadResult = await uploadReceipt({
       ref,
-      phone: phone.trim(),
+      phone: "",
       fileBase64,
       fileName,
       mimeType
