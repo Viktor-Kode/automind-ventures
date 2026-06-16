@@ -17,7 +17,7 @@ export default function Navbar() {
               <Wrench className="w-4 h-4 text-[#0A0F1E]" strokeWidth={2.5} />
             </div>
             <span className="font-bold text-white text-lg leading-tight">
-              Gearbox<span className="text-[#F5A623]">Training</span>
+              Automind<span className="text-[#F5A623]">ventures</span>
             </span>
           </Link>
 

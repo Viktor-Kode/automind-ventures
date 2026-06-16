@@ -6,11 +6,10 @@ import { User, Phone, MapPin, GraduationCap, MessageSquare, Calendar, Loader2, A
 
 const EXPERIENCE_OPTIONS = [
   { value: "", label: "Select your experience level" },
-  { value: "None", label: "None — Complete beginner" },
-  { value: "Apprentice", label: "Apprentice — Learning the trade" },
-  { value: "Mechanic", label: "Mechanic — Working professional" },
-  { value: "Car Owner", label: "Car Owner — Interested in maintenance" },
-  { value: "Other", label: "Other" }
+  { value: "Rewire ", },
+  { value: "Mechanic", },
+  { value: "Gear master", },
+
 ];
 
 interface FormData {
@@ -231,8 +230,8 @@ export default function ApplyForm() {
             <label
               key={val}
               className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-lg border cursor-pointer transition-all duration-200 ${form.canAttend === val
-                  ? "bg-[#F5A623]/20 border-[#F5A623] text-[#F5A623] font-semibold"
-                  : "border-white/20 text-white/60 hover:border-white/40"
+                ? "bg-[#F5A623]/20 border-[#F5A623] text-[#F5A623] font-semibold"
+                : "border-white/20 text-white/60 hover:border-white/40"
                 }`}
             >
               <input

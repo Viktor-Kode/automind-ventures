@@ -15,7 +15,7 @@ export default function Footer() {
                 <Wrench className="w-3.5 h-3.5 text-[#0A0F1E]" strokeWidth={2.5} />
               </div>
               <span className="font-bold text-white">
-                Gearbox<span className="text-[#F5A623]">Training</span>
+                Automind<span className="text-[#F5A623]">ventures</span>
               </span>
             </Link>
             <p className="text-white/50 text-sm text-center md:text-left max-w-xs">

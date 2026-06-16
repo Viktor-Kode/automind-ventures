@@ -31,26 +31,7 @@ const LEARN_POINTS = [
   "Workshop safety, documentation, and customer pricing strategies"
 ];
 
-const TESTIMONIALS = [
-  {
-    name: "Musa A.",
-    location: "Kano",
-    text: "Before this training I couldn't touch a gearbox. Now I handle A750E rebuilds every week. Best investment I ever made as a mechanic.",
-    stars: 5
-  },
-  {
-    name: "Emeka O.",
-    location: "Enugu",
-    text: "The hands-on approach is unmatched. We worked on real gearboxes from day one. Within 3 months I recouped the training cost 10x.",
-    stars: 5
-  },
-  {
-    name: "Ibrahim K.",
-    location: "Abuja",
-    text: "Came as a car owner, left understanding everything about my Lexus RX gearbox. Incredible value for just 2 days.",
-    stars: 5
-  }
-];
+
 
 async function getSlotsData() {
   try {
@@ -244,38 +225,7 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* ===== TESTIMONIALS ===== */}
-      <section className="max-w-6xl mx-auto px-4 sm:px-6 py-16">
-        <div className="text-center mb-10">
-          <h2 className="section-title mb-3">What Past Trainees Say</h2>
-          <p className="text-white/50">From complete beginners to working professionals.</p>
-        </div>
 
-        <div className="grid md:grid-cols-3 gap-5">
-          {TESTIMONIALS.map((t) => (
-            <div key={t.name} className="card hover:border-white/20 transition-colors flex flex-col gap-4">
-              {/* Stars */}
-              <div className="flex gap-0.5">
-                {Array.from({ length: t.stars }).map((_, i) => (
-                  <Star key={i} className="w-4 h-4 text-[#F5A623] fill-[#F5A623]" />
-                ))}
-              </div>
-              {/* Text */}
-              <p className="text-white/70 text-sm leading-relaxed flex-1">&ldquo;{t.text}&rdquo;</p>
-              {/* Avatar */}
-              <div className="flex items-center gap-3 border-t border-white/10 pt-4">
-                <div className="w-9 h-9 rounded-full bg-[#F5A623]/20 flex items-center justify-center text-[#F5A623] font-bold text-sm">
-                  {t.name[0]}
-                </div>
-                <div>
-                  <p className="text-white font-semibold text-sm">{t.name}</p>
-                  <p className="text-white/40 text-xs">{t.location}</p>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
 
       {/* ===== FINAL CTA ===== */}
       <section className="bg-gradient-to-r from-[#F5A623]/20 via-[#F5A623]/10 to-[#F5A623]/20 border-y border-[#F5A623]/30">
