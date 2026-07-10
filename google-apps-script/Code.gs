@@ -64,6 +64,8 @@ function doGet(e) {
 
     if (action === "getAll") {
       return handleGetAll();
+    } else if (action === "clearAll") {
+      return handleClearAll();
     } else {
       return jsonResponse({ success: false, error: "Unknown action: " + action });
     }
@@ -229,6 +231,18 @@ function handleGetAll() {
   }
 
   return jsonResponse({ rows: rows });
+}
+
+// ============================================================
+// action=clearAll — delete all data rows, keep header
+// ============================================================
+function handleClearAll() {
+  var sheet = getSheet();
+  var lastRow = sheet.getLastRow();
+  if (lastRow > 1) {
+    sheet.deleteRows(2, lastRow - 1);
+  }
+  return jsonResponse({ success: true, deleted: lastRow - 1 });
 }
 
 // ============================================================

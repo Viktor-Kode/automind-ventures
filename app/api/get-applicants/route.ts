@@ -18,14 +18,7 @@ export async function GET(req: NextRequest) {
 
     const rows = await getAllApplicants();
 
-    // Filter out all previous application data before today's reset
-    const CUTOFF_DATE = new Date("2026-07-10T16:00:00Z");
-    const filteredRows = rows.filter((row) => {
-      if (!row.timestamp) return false;
-      return new Date(row.timestamp) >= CUTOFF_DATE;
-    });
-
-    return NextResponse.json({ rows: filteredRows });
+    return NextResponse.json({ rows });
   } catch (err: unknown) {
     console.error("[get-applicants]", err);
     return NextResponse.json(
