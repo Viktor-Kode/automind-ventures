@@ -101,14 +101,6 @@ export default function ApplyForm() {
       className="space-y-5"
       noValidate
     >
-      {/* Error toast */}
-      {error && (
-        <div className="flex items-start gap-3 bg-red-500/10 border border-red-500/30 rounded-lg px-4 py-3 animate-fade-in">
-          <AlertCircle className="w-5 h-5 text-red-400 mt-0.5 shrink-0" />
-          <p className="text-red-400 text-sm">{error}</p>
-        </div>
-      )}
-
       {/* Full Name */}
       <div>
         <label htmlFor="name" className="form-label">
@@ -264,10 +256,6 @@ export default function ApplyForm() {
           type="checkbox"
           checked={acceptedTerms}
           onChange={(e) => {
-            if (!hasClickedTerms) {
-              setError("Please click and read the Terms & Conditions link before accepting.");
-              return;
-            }
             setAcceptedTerms(e.target.checked);
             if (error) setError(null);
           }}
@@ -289,6 +277,14 @@ export default function ApplyForm() {
           for this training (no sharing, recording, or reposting training content). <span className="text-[#F5A623]">*</span>
         </label>
       </div>
+
+      {/* Error toast above the button */}
+      {error && (
+        <div className="flex items-start gap-3 bg-red-500/10 border border-red-500/30 rounded-lg px-4 py-3 animate-fade-in">
+          <AlertCircle className="w-5 h-5 text-red-400 mt-0.5 shrink-0" />
+          <p className="text-red-400 text-sm">{error}</p>
+        </div>
+      )}
 
       {/* Submit */}
       <button
