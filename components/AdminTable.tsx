@@ -18,7 +18,7 @@ type TabKey = "all" | "pending_payment" | "awaiting_verification" | "registered"
 
 const TABS: { key: TabKey; label: string }[] = [
   { key: "all", label: "All" },
-  { key: "pending_payment", label: "Pending" },
+  { key: "pending_payment", label: "Applied" },
   { key: "awaiting_verification", label: "Awaiting Verification" },
   { key: "registered", label: "Registered" },
   { key: "dropped", label: "Dropped" }
@@ -134,7 +134,7 @@ export default function AdminTable({ initialApplicants, adminPassword }: AdminTa
       <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
         {[
           { label: "Total", value: stats.total, color: "text-white" },
-          { label: "Pending", value: stats.pending, color: "text-white/60" },
+          { label: "Applied", value: stats.pending, color: "text-white/60" },
           { label: "Awaiting", value: stats.verified, color: "text-amber-400" },
           { label: "Registered", value: stats.registered, color: "text-green-400" },
           { label: "Dropped", value: stats.dropped, color: "text-red-400" }

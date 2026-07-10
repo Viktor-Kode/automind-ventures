@@ -33,6 +33,12 @@ export default function Footer() {
               >
                 Apply Now
               </Link>
+              <Link
+                href="/terms"
+                className="text-white/60 hover:text-[#F5A623] text-sm transition-colors"
+              >
+                Terms & Conditions
+              </Link>
             </div>
             <p className="text-white/30 text-xs">
               © {year} GearboxTraining. All rights reserved.

@@ -10,7 +10,7 @@ export type ApplicantStatus =
   | "dropped";
 
 export const STATUS_LABELS: Record<ApplicantStatus, string> = {
-  pending_payment: "Pending Payment",
+  pending_payment: "Applied",
   awaiting_verification: "Awaiting Verification",
   registered: "Registered",
   dropped: "Dropped"

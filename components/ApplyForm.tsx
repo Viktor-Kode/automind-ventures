@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { User, Phone, MapPin, GraduationCap, MessageSquare, Calendar, Loader2, AlertCircle } from "lucide-react";
 
 const EXPERIENCE_OPTIONS = [
@@ -33,6 +34,9 @@ export default function ApplyForm() {
     canAttend: ""
   });
 
+  const [acceptedTerms, setAcceptedTerms] = useState(false);
+  const [hasClickedTerms, setHasClickedTerms] = useState(false);
+
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -52,6 +56,8 @@ export default function ApplyForm() {
     if (!form.location.trim()) return "Location is required.";
     if (!form.experience) return "Please select your experience level.";
     if (!form.canAttend) return "Please answer whether you can attend all 2 days.";
+    if (!hasClickedTerms) return "Please click and read the Terms & Conditions link before applying.";
+    if (!acceptedTerms) return "You must accept the Terms & Conditions to apply.";
     return null;
   };
 
@@ -80,7 +86,7 @@ export default function ApplyForm() {
       }
 
       const firstName = form.name.trim().split(" ")[0];
-      router.push(`/pay?ref=${encodeURIComponent(data.refCode)}&name=${encodeURIComponent(firstName)}`);
+      router.push(`/thank-you?ref=${encodeURIComponent(data.refCode)}&name=${encodeURIComponent(firstName)}`);
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "Something went wrong. Please try again.");
     } finally {
@@ -250,6 +256,40 @@ export default function ApplyForm() {
         </div>
       </div>
 
+      {/* Terms and conditions checkbox */}
+      <div className="flex items-start gap-3 bg-white/5 border border-white/10 rounded-xl p-4 my-2">
+        <input
+          id="terms"
+          name="terms"
+          type="checkbox"
+          checked={acceptedTerms}
+          onChange={(e) => {
+            if (!hasClickedTerms) {
+              setError("Please click and read the Terms & Conditions link before accepting.");
+              return;
+            }
+            setAcceptedTerms(e.target.checked);
+            if (error) setError(null);
+          }}
+          className="w-4 h-4 rounded border-white/20 bg-[#0A0F1E] text-[#F5A623] focus:ring-[#F5A623] focus:ring-2 mt-1 cursor-pointer"
+        />
+        <label htmlFor="terms" className="text-white/70 text-sm select-none cursor-pointer">
+          I accept the{" "}
+          <Link
+            href="/terms"
+            target="_blank"
+            onClick={() => {
+              setHasClickedTerms(true);
+              setError(null);
+            }}
+            className="text-[#F5A623] hover:underline font-bold"
+          >
+            Terms & Conditions
+          </Link>{" "}
+          for this training (no sharing, recording, or reposting training content). <span className="text-[#F5A623]">*</span>
+        </label>
+      </div>
+
       {/* Submit */}
       <button
         id="apply-submit-btn"
@@ -268,7 +308,7 @@ export default function ApplyForm() {
       </button>
 
       <p className="text-white/30 text-xs text-center">
-        By submitting, you agree to be contacted on WhatsApp about your training slot.
+        By submitting, you agree to be contacted on WhatsApp about your training.
       </p>
     </form>
   );

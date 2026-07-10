@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
 import ApplyForm from "../../components/ApplyForm";
-import { ChevronLeft, Shield, Clock, Users } from "lucide-react";
+import { ChevronLeft, Shield, Clock } from "lucide-react";
 import Link from "next/link";
 
 export const metadata: Metadata = {
   title: "Apply for Training",
   description:
-    "Apply for the Toyota/Lexus Gearbox Repair Training. Fill in your details to reserve your slot. Only ₦2,000 application fee."
+    "Apply for the Toyota/Lexus Gearbox Repair Training. Fill in your details to get started."
 };
 
 export default function ApplyPage() {
@@ -26,11 +26,10 @@ export default function ApplyPage() {
         <div className="md:col-span-3">
           <div className="mb-7">
             <h1 className="text-3xl font-black text-white mb-2">
-              Reserve Your Training Slot
+              Apply for Training
             </h1>
             <p className="text-white/50">
-              Complete the form below. You&apos;ll be directed to pay the ₦2,000
-              application fee immediately after.
+              Complete the form below to apply for the professional automatic gearbox training.
             </p>
           </div>
 
@@ -51,16 +50,11 @@ export default function ApplyPage() {
                 { step: "1", title: "Fill Application", desc: "Takes about 2 minutes." },
                 {
                   step: "2",
-                  title: "Pay ₦2,000 Fee",
-                  desc: "Bank transfer — slot held for 24 hours."
+                  title: "Review Details",
+                  desc: "We will contact you on WhatsApp to discuss your background."
                 },
                 {
                   step: "3",
-                  title: "Upload Receipt",
-                  desc: "We verify within 2 hours on WhatsApp."
-                },
-                {
-                  step: "4",
                   title: "Attend Training",
                   desc: `2 days hands-on. Leave certified.`
                 }
@@ -89,13 +83,7 @@ export default function ApplyPage() {
             <div className="flex items-start gap-3">
               <Clock className="w-4 h-4 text-[#F5A623] shrink-0 mt-0.5" />
               <p className="text-white/60 text-sm">
-                Your slot is held for 24 hours after application. Pay promptly to secure it.
-              </p>
-            </div>
-            <div className="flex items-start gap-3">
-              <Users className="w-4 h-4 text-[#F5A623] shrink-0 mt-0.5" />
-              <p className="text-white/60 text-sm">
-                Class is capped at {process.env.NEXT_PUBLIC_TOTAL_SLOTS ?? "12"} participants for quality learning.
+                Training schedules and locations will be shared directly with you.
               </p>
             </div>
           </div>

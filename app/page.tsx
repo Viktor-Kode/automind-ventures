@@ -3,24 +3,18 @@ import Link from "next/link";
 import {
   CheckCircle2,
   MapPin,
-  Users,
-  Star,
   ChevronRight,
   Wrench,
   Award,
   Clock
 } from "lucide-react";
-import { getAllApplicants } from "../lib/sheets";
 
 export const metadata: Metadata = {
   title: "Toyota/Lexus Gearbox Repair Training — 2 Days Hands-On",
   description:
-    "Join Nigeria's premier Toyota/Lexus automatic gearbox repair training. 2 days hands-on. Get certified. Limited slots available."
+    "Join Nigeria's premier Toyota/Lexus automatic gearbox repair training. 2 days hands-on. Get certified."
 };
 
-export const revalidate = 60; // Revalidate every 60s for slot count
-
-const TOTAL_SLOTS = parseInt(process.env.NEXT_PUBLIC_TOTAL_SLOTS ?? "12");
 const TRAINING_LOCATION = process.env.NEXT_PUBLIC_TRAINING_LOCATION ?? "TBD";
 
 const LEARN_POINTS = [
@@ -31,23 +25,7 @@ const LEARN_POINTS = [
   "Workshop safety, documentation, and customer pricing strategies"
 ];
 
-
-
-async function getSlotsData() {
-  try {
-    const applicants = await getAllApplicants();
-    const filled = applicants.filter((a) => a.status !== "dropped").length;
-    const remaining = Math.max(0, TOTAL_SLOTS - filled);
-    return { filled, remaining };
-  } catch {
-    return { filled: 0, remaining: TOTAL_SLOTS };
-  }
-}
-
-export default async function HomePage() {
-  const { remaining } = await getSlotsData();
-  const isFull = remaining === 0;
-
+export default function HomePage() {
   return (
     <>
       {/* ===== HERO ===== */}
@@ -77,23 +55,14 @@ export default async function HomePage() {
 
           {/* CTAs */}
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mb-10">
-            {!isFull ? (
-              <Link
-                href="/apply"
-                id="hero-apply-btn"
-                className="btn-primary flex items-center gap-2 px-8 py-4 text-lg w-full sm:w-auto"
-              >
-                Apply Now — ₦2,000 Fee
-                <ChevronRight className="w-5 h-5" />
-              </Link>
-            ) : (
-              <button
-                disabled
-                className="bg-white/10 text-white/40 font-bold py-4 px-8 rounded-lg text-lg cursor-not-allowed w-full sm:w-auto"
-              >
-                Slots Full — Join Waitlist
-              </button>
-            )}
+            <Link
+              href="/apply"
+              id="hero-apply-btn"
+              className="btn-primary flex items-center gap-2 px-8 py-4 text-lg w-full sm:w-auto"
+            >
+              Apply Now
+              <ChevronRight className="w-5 h-5" />
+            </Link>
           </div>
 
           {/* Hero image placeholder */}
@@ -101,11 +70,6 @@ export default async function HomePage() {
             <div className="text-center">
               <Wrench className="w-16 h-16 text-[#F5A623]/30 mx-auto mb-3" />
               <p className="text-white/20 text-sm">Replace with hero.jpg in /public/images/</p>
-            </div>
-            {/* Slot urgency badge */}
-            <div className="absolute bottom-4 right-4 bg-[#0A0F1E]/90 border border-[#F5A623]/30 rounded-xl px-4 py-2 text-left backdrop-blur-sm">
-              <p className="text-[#F5A623] font-bold text-lg leading-none">{remaining}</p>
-              <p className="text-white/60 text-xs">slots remaining</p>
             </div>
           </div>
         </div>
@@ -123,16 +87,6 @@ export default async function HomePage() {
             <div className="flex items-center gap-2 text-white/70">
               <Clock className="w-4 h-4 text-[#F5A623]" />
               <span className="font-medium">2 Days Intensive</span>
-            </div>
-            <div className="hidden md:block w-px h-4 bg-white/20" />
-            <div className="flex items-center gap-2">
-              <Users className="w-4 h-4 text-[#F5A623]" />
-              <span className="font-bold text-white">
-                {TOTAL_SLOTS} slots —{" "}
-                <span className={remaining <= 3 ? "text-red-400" : "text-green-400"}>
-                  {remaining} remaining
-                </span>
-              </span>
             </div>
           </div>
         </div>
@@ -175,75 +129,21 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* ===== PRICING ===== */}
-      <section className="bg-[#111827] border-y border-white/10">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-16">
-          <div className="text-center mb-10">
-            <h2 className="section-title mb-3">Investment Breakdown</h2>
-            <p className="text-white/50">Transparent pricing — no hidden charges.</p>
-          </div>
-
-          <div className="max-w-sm mx-auto">
-            <div className="card border border-white/10 rounded-2xl overflow-hidden">
-              <div className="divide-y divide-white/10">
-                {[
-                  { label: "Application Fee", amount: 2000, note: "Pay now to reserve slot" },
-                  { label: "Training Fee", amount: 40000, note: "Materials & hands-on sessions" },
-                  { label: "Certification Fee", amount: 8000, note: "Certificate + assessment" }
-                ].map((item) => (
-                  <div key={item.label} className="flex items-center justify-between px-5 py-4">
-                    <div>
-                      <p className="text-white font-medium text-sm">{item.label}</p>
-                      <p className="text-white/40 text-xs mt-0.5">{item.note}</p>
-                    </div>
-                    <p className="text-white font-bold">
-                      ₦{item.amount.toLocaleString()}
-                    </p>
-                  </div>
-                ))}
-              </div>
-
-              {/* Total */}
-              <div className="bg-[#F5A623]/10 border-t border-[#F5A623]/30 px-5 py-4 flex items-center justify-between">
-                <p className="text-[#F5A623] font-black text-lg">Total</p>
-                <p className="text-[#F5A623] font-black text-2xl">₦50,000</p>
-              </div>
-            </div>
-
-            <p className="text-white/30 text-xs text-center mt-3">
-              Only the ₦2,000 application fee is due now. Remaining balance before training starts.
-            </p>
-
-            <Link
-              href="/apply"
-              id="pricing-apply-btn"
-              className="btn-primary w-full text-center py-4 text-base mt-5 block"
-            >
-              Secure Your Slot Now →
-            </Link>
-          </div>
-        </div>
-      </section>
-
-
-
       {/* ===== FINAL CTA ===== */}
       <section className="bg-gradient-to-r from-[#F5A623]/20 via-[#F5A623]/10 to-[#F5A623]/20 border-y border-[#F5A623]/30">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 py-14 text-center">
           <h2 className="text-3xl md:text-4xl font-black text-white mb-3">
-            {remaining > 0
-              ? `Only ${remaining} slot${remaining === 1 ? "" : "s"} left`
-              : "Join the Waitlist"}
+            Ready to Start?
           </h2>
           <p className="text-white/60 mb-8 max-w-xl mx-auto">
-            Don&apos;t miss this training cycle. Applications close once all slots are filled.
+            Don&apos;t miss this training cycle. Applications close soon.
           </p>
           <Link
             href="/apply"
             id="final-apply-btn"
             className="btn-primary inline-flex items-center gap-2 px-10 py-4 text-lg"
           >
-            Apply Now — Takes 2 Minutes
+            Apply Now
             <ChevronRight className="w-5 h-5" />
           </Link>
         </div>
@@ -259,7 +159,6 @@ export default async function HomePage() {
           Apply Now →
         </Link>
       </div>
-
     </>
   );
 }
