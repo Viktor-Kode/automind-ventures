@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { CheckCircle2, MessageSquare } from "lucide-react";
+import { CheckCircle2 } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "Thank You",
@@ -18,11 +18,6 @@ export default async function ThankYouPage({ searchParams }: ThankYouProps) {
   const resolvedParams = await searchParams;
   const ref = resolvedParams.ref ?? "GBT-000";
   const name = resolvedParams.name ?? "Applicant";
-
-  const whatsappNumber = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER ?? "";
-  const whatsappLink = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(
-    `Hi AutoMind Ventures, I have completed my application for the Gearbox Repair Training. My reference code is ${ref}.`
-  )}`;
 
   return (
     <div className="max-w-xl mx-auto px-4 sm:px-6 py-16 text-center">
@@ -45,20 +40,9 @@ export default async function ThankYouPage({ searchParams }: ThankYouProps) {
       </p>
 
       <div className="flex flex-col gap-3 justify-center">
-        {whatsappNumber && (
-          <a
-            href={whatsappLink}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="btn-primary flex items-center justify-center gap-2 py-4 px-6 text-base font-bold"
-          >
-            <MessageSquare className="w-5 h-5" />
-            Message us on WhatsApp
-          </a>
-        )}
         <Link
           href="/"
-          className="text-white/50 hover:text-white text-sm font-semibold py-2 transition-colors"
+          className="btn-primary inline-flex items-center justify-center py-4 px-6 text-base font-bold"
         >
           Back to Homepage
         </Link>
