@@ -35,7 +35,6 @@ export default function ApplyForm() {
   });
 
   const [acceptedTerms, setAcceptedTerms] = useState(false);
-  const [hasClickedTerms, setHasClickedTerms] = useState(false);
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -56,7 +55,6 @@ export default function ApplyForm() {
     if (!form.location.trim()) return "Location is required.";
     if (!form.experience) return "Please select your experience level.";
     if (!form.canAttend) return "Please answer whether you can attend all 2 days.";
-    if (!hasClickedTerms) return "Please click and read the Terms & Conditions link before applying.";
     if (!acceptedTerms) return "You must accept the Terms & Conditions to apply.";
     return null;
   };
@@ -266,10 +264,6 @@ export default function ApplyForm() {
           <Link
             href="/terms"
             target="_blank"
-            onClick={() => {
-              setHasClickedTerms(true);
-              setError(null);
-            }}
             className="text-[#F5A623] hover:underline font-bold"
           >
             Terms & Conditions
